@@ -351,6 +351,19 @@ class UserControllerTest extends TestCase
 
 The package automatically generates OpenAPI 3.0 documentation from your API routes - **no additional coding required!**
 
+### Zero-Configuration Auto-Generation
+
+The package intelligently generates documentation by:
+
+- **Detecting ApiResponse method calls** - Scans your controller code for `ApiResponse::success()`, `ApiResponse::created()`, etc. and automatically determines response status codes
+- **Extracting FormRequest validation rules** (optional) - If your controller methods use FormRequest classes, validation rules are automatically converted to OpenAPI request body schemas
+- **Inferring from route patterns** - Resource controller methods (`index`, `show`, `store`, `update`, `destroy`) get meaningful summaries and descriptions
+- **Detecting pagination** - Automatically identifies paginated responses when using `->paginate()` or `->cursorPaginate()`
+
+**No FormRequest or PHP attributes required!** Just write your Laravel code normally and get instant API documentation.
+
+> **Note:** FormRequest classes are completely optional. If you don't use them, the package will still generate documentation - it will just show a generic request body schema for POST/PUT/PATCH endpoints. Using FormRequest simply provides richer, more detailed request body documentation.
+
 ### View Documentation
 
 Simply visit `/api-docs` in your browser to see the interactive Swagger UI:
@@ -369,9 +382,9 @@ php artisan api:docs
 
 This creates `public/api-docs/openapi.json` that you can use with any OpenAPI-compatible tool.
 
-### Enhanced Documentation with Attributes
+### Enhanced Documentation with Attributes (Optional)
 
-For more detailed documentation, add PHP attributes to your controller methods:
+For more detailed or customized documentation, you can optionally add PHP attributes to your controller methods:
 
 ```php
 use Stackmasteraliza\ApiResponse\Attributes\ApiEndpoint;

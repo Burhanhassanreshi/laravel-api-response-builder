@@ -21,7 +21,9 @@ composer require stackmasteraliza/laravel-api-response
 
 Copy the following files from this `example` folder to your Laravel project:
 
-- `app/Http/Controllers/DemoController.php`
+- `app/Http/Controllers/DemoController.php` - Demo endpoints (no attributes!)
+- `app/Http/Controllers/UserController.php` - Resource controller with FormRequest
+- `app/Http/Requests/CreateUserRequest.php` - FormRequest for auto-schema extraction
 - `app/Models/User.php` (replace existing)
 - `routes/api.php` (replace existing)
 - `database/migrations/2025_01_01_000000_create_users_table.php`
@@ -48,7 +50,18 @@ Visit `http://localhost:8000/api-docs` to see the auto-generated Swagger documen
 
 ## Auto-Generated Swagger Documentation
 
-The package automatically generates OpenAPI/Swagger documentation from your routes. No additional coding required!
+The package automatically generates OpenAPI/Swagger documentation from your routes. **No additional coding required!**
+
+### Zero-Configuration Features
+
+Documentation is generated automatically by:
+
+- **Scanning your code** for `ApiResponse::success()`, `ApiResponse::created()`, etc. calls
+- **Extracting FormRequest validation rules** (optional) to build request body schemas
+- **Detecting pagination** when using `->paginate()` or `->cursorPaginate()`
+- **Inferring from route patterns** - resource methods get descriptive summaries
+
+> **Note:** FormRequest is completely optional! Without it, POST/PUT/PATCH endpoints will show a generic request body. Using FormRequest just provides richer documentation.
 
 ### View Documentation
 
@@ -64,7 +77,7 @@ This creates `public/api-docs/openapi.json` that you can use with any OpenAPI-co
 
 ### Using PHP Attributes (Optional)
 
-For more detailed documentation, add attributes to your controller methods:
+PHP attributes are **completely optional**. Use them only if you need more detailed or customized documentation:
 
 ```php
 use Stackmasteraliza\ApiResponse\Attributes\ApiEndpoint;
@@ -88,6 +101,18 @@ public function show(int $id): JsonResponse
 ---
 
 ## Demo Endpoints
+
+### User Resource (FormRequest Demo)
+
+These endpoints demonstrate **automatic schema extraction** from FormRequest validation rules:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users` | List users (paginated) |
+| GET | `/api/users/{id}` | Get single user |
+| POST | `/api/users` | Create user (uses CreateUserRequest - schema auto-generated!) |
+| PUT | `/api/users/{id}` | Update user |
+| DELETE | `/api/users/{id}` | Delete user |
 
 ### Success Responses
 
@@ -127,11 +152,12 @@ public function show(int $id): JsonResponse
 For your demo video, show these in order:
 
 1. **Installation** - `composer require stackmasteraliza/laravel-api-response`
-2. **Swagger Docs** - Visit `/api-docs` (auto-generated!)
-3. **Basic Success** - Hit `/api/demo/success`
-4. **Pagination Magic** - Hit `/api/demo/users-paginated` (show auto meta!)
-5. **Error Handling** - Hit `/api/demo/not-found` and `/api/demo/validate`
-6. **Custom Data** - Hit `/api/demo/custom-data`
+2. **Swagger Docs** - Visit `/api-docs` (auto-generated with zero config!)
+3. **FormRequest Magic** - Show `POST /api/users` - the request body schema is auto-generated from `CreateUserRequest` validation rules!
+4. **Basic Success** - Hit `/api/demo/success`
+5. **Pagination Magic** - Hit `/api/demo/users-paginated` (show auto meta!)
+6. **Error Handling** - Hit `/api/demo/not-found` and `/api/demo/validate`
+7. **No Attributes Needed** - Show the clean DemoController code - no PHP attributes!
 
 ## Sample Responses
 

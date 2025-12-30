@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,7 +13,23 @@ use Illuminate\Support\Facades\Route;
 | Run: php artisan serve
 | Then test endpoints with Postman or browser
 |
+| ZERO-CONFIGURATION DOCUMENTATION:
+| All routes below are automatically documented in Swagger UI!
+| Visit /api-docs to see the generated documentation.
+| No PHP attributes required - it just works!
+|
 */
+
+// ==========================================
+// USER RESOURCE (FormRequest Demo)
+// ==========================================
+// This demonstrates automatic schema extraction from FormRequest
+
+Route::get('/users', [UserController::class, 'index']);           // List users (paginated)
+Route::get('/users/{id}', [UserController::class, 'show']);       // Get single user
+Route::post('/users', [UserController::class, 'store']);          // Create user (uses CreateUserRequest!)
+Route::put('/users/{id}', [UserController::class, 'update']);     // Update user
+Route::delete('/users/{id}', [UserController::class, 'destroy']); // Delete user
 
 // ==========================================
 // SUCCESS RESPONSES

@@ -2,11 +2,15 @@
 
 namespace Stackmasteraliza\ApiResponse\OpenApi;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
+use ReflectionParameter;
 use Stackmasteraliza\ApiResponse\Attributes\ApiEndpoint;
 use Stackmasteraliza\ApiResponse\Attributes\ApiRequest;
 use Stackmasteraliza\ApiResponse\Attributes\ApiRequestBody;
@@ -248,8 +252,8 @@ class OpenApiGenerator
         }
 
         $spec = [
-            'summary' => $endpoint?->summary ?? $this->generateSummary($reflection),
-            'description' => $endpoint?->description ?? $this->generateDescription($reflection),
+            'summary' => $endpoint?->summary ?? $this->generateSummary($reflection, $route),
+            'description' => $endpoint?->description ?? $this->generateDescription($reflection, $route),
             'operationId' => $this->generateOperationId($route, $reflection),
             'tags' => $endpoint?->tags ?? $this->inferTags($route),
             'parameters' => $this->extractParameters($route, $reflection),
@@ -270,35 +274,94 @@ class OpenApiGenerator
     }
 
     /**
-     * Generate summary from method name.
+     * Generate summary from method name and route.
      */
-    protected function generateSummary(ReflectionMethod $reflection): string
+    protected function generateSummary(ReflectionMethod $reflection, ?Route $route = null): string
     {
         $name = $reflection->getName();
-        // Convert camelCase to words
-        $words = preg_replace('/([a-z])([A-Z])/', '$1 $2', $name);
+        $className = $reflection->getDeclaringClass()->getShortName();
 
-        return ucfirst($words);
+        // Extract resource name from controller (UserController -> User)
+        $resource = str_replace('Controller', '', $className);
+        $resourceLower = strtolower($resource);
+
+        // Map common Laravel resource controller methods to descriptive summaries
+        $methodMappings = [
+            'index' => "List all {$resourceLower}s",
+            'show' => "Get a {$resourceLower}",
+            'store' => "Create a new {$resourceLower}",
+            'create' => "Create a new {$resourceLower}",
+            'update' => "Update a {$resourceLower}",
+            'destroy' => "Delete a {$resourceLower}",
+            'delete' => "Delete a {$resourceLower}",
+            'edit' => "Edit a {$resourceLower}",
+        ];
+
+        if (isset($methodMappings[$name])) {
+            return ucfirst($methodMappings[$name]);
+        }
+
+        // Convert camelCase/snake_case to readable words
+        $words = preg_replace('/([a-z])([A-Z])/', '$1 $2', $name);
+        $words = str_replace('_', ' ', $words);
+
+        // Build a more descriptive summary
+        $httpMethod = null;
+        if ($route) {
+            $methods = $route->methods();
+            $httpMethod = strtoupper($methods[0] ?? 'GET');
+        }
+
+        $summary = ucfirst(strtolower($words));
+
+        // Add context based on HTTP method if summary is too generic
+        if (strlen($summary) < 10 && $httpMethod) {
+            $verbMap = [
+                'GET' => 'Get',
+                'POST' => 'Create',
+                'PUT' => 'Update',
+                'PATCH' => 'Update',
+                'DELETE' => 'Delete',
+            ];
+            $verb = $verbMap[$httpMethod] ?? $httpMethod;
+            $summary = "{$verb} {$resourceLower} - {$summary}";
+        }
+
+        return $summary;
     }
 
     /**
-     * Generate description from docblock.
+     * Generate description from docblock or route context.
      */
-    protected function generateDescription(ReflectionMethod $reflection): string
+    protected function generateDescription(ReflectionMethod $reflection, ?Route $route = null): string
     {
+        // First try to get from docblock
         $docComment = $reflection->getDocComment();
-        if (! $docComment) {
-            return '';
+        if ($docComment) {
+            // Extract first paragraph from docblock
+            preg_match('/\/\*\*\s*\n\s*\*\s*(.+?)(?:\n\s*\*\s*\n|\n\s*\*\s*@)/s', $docComment, $matches);
+
+            if (isset($matches[1])) {
+                return trim(preg_replace('/\s*\n\s*\*\s*/', ' ', $matches[1]));
+            }
         }
 
-        // Extract first paragraph from docblock
-        preg_match('/\/\*\*\s*\n\s*\*\s*(.+?)(?:\n\s*\*\s*\n|\n\s*\*\s*@)/s', $docComment, $matches);
+        // Generate description from context
+        $name = $reflection->getName();
+        $className = $reflection->getDeclaringClass()->getShortName();
+        $resource = str_replace('Controller', '', $className);
 
-        if (isset($matches[1])) {
-            return trim(preg_replace('/\s*\n\s*\*\s*/', ' ', $matches[1]));
-        }
+        $descriptionMappings = [
+            'index' => "Retrieve a list of all {$resource} resources. Supports pagination if the response data is paginated.",
+            'show' => "Retrieve a single {$resource} by its identifier.",
+            'store' => "Create a new {$resource} with the provided data.",
+            'create' => "Create a new {$resource} with the provided data.",
+            'update' => "Update an existing {$resource} with the provided data.",
+            'destroy' => "Permanently delete a {$resource} from the system.",
+            'delete' => "Permanently delete a {$resource} from the system.",
+        ];
 
-        return '';
+        return $descriptionMappings[$name] ?? '';
     }
 
     /**
@@ -377,7 +440,7 @@ class OpenApiGenerator
     }
 
     /**
-     * Extract request body from attributes.
+     * Extract request body from attributes or FormRequest.
      */
     protected function extractRequestBody(ReflectionMethod $reflection, Route $route): ?array
     {
@@ -388,6 +451,7 @@ class OpenApiGenerator
             return null;
         }
 
+        // First check for ApiRequestBody attribute
         $attributes = $reflection->getAttributes(ApiRequestBody::class);
 
         if (! empty($attributes)) {
@@ -426,6 +490,12 @@ class OpenApiGenerator
             return $requestBody;
         }
 
+        // Auto-detect FormRequest in method parameters
+        $formRequestSchema = $this->extractFormRequestSchema($reflection);
+        if ($formRequestSchema) {
+            return $formRequestSchema;
+        }
+
         // Auto-generate basic request body for POST/PUT/PATCH
         return [
             'required' => false,
@@ -438,6 +508,265 @@ class OpenApiGenerator
                 ],
             ],
         ];
+    }
+
+    /**
+     * Extract schema from FormRequest validation rules.
+     */
+    protected function extractFormRequestSchema(ReflectionMethod $reflection): ?array
+    {
+        foreach ($reflection->getParameters() as $parameter) {
+            $type = $parameter->getType();
+
+            if (! $type instanceof ReflectionNamedType || $type->isBuiltin()) {
+                continue;
+            }
+
+            $className = $type->getName();
+
+            if (! class_exists($className)) {
+                continue;
+            }
+
+            try {
+                $classReflection = new ReflectionClass($className);
+
+                if (! $classReflection->isSubclassOf(FormRequest::class)) {
+                    continue;
+                }
+
+                // Try to extract rules from the FormRequest
+                $rules = $this->extractFormRequestRules($classReflection);
+
+                if (empty($rules)) {
+                    continue;
+                }
+
+                return $this->buildSchemaFromRules($rules, $classReflection);
+            } catch (\ReflectionException $e) {
+                continue;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract validation rules from FormRequest class.
+     */
+    protected function extractFormRequestRules(ReflectionClass $classReflection): array
+    {
+        // Try to instantiate and get rules
+        try {
+            // Check if rules method exists
+            if (! $classReflection->hasMethod('rules')) {
+                return [];
+            }
+
+            $rulesMethod = $classReflection->getMethod('rules');
+
+            // Try to get rules from source code analysis (safer than instantiation)
+            $source = $this->getMethodSource($rulesMethod);
+            $rules = $this->parseRulesFromSource($source);
+
+            if (! empty($rules)) {
+                return $rules;
+            }
+
+            // Fallback: try to create instance (may not work for all FormRequests)
+            $className = $classReflection->getName();
+            $instance = new $className();
+
+            if (method_exists($instance, 'rules')) {
+                return $instance->rules();
+            }
+        } catch (\Throwable $e) {
+            // Ignore errors and return empty
+        }
+
+        return [];
+    }
+
+    /**
+     * Get method source code.
+     */
+    protected function getMethodSource(ReflectionMethod $method): string
+    {
+        $filename = $method->getFileName();
+        $startLine = $method->getStartLine();
+        $endLine = $method->getEndLine();
+
+        if (! $filename || ! file_exists($filename)) {
+            return '';
+        }
+
+        $lines = file($filename);
+        $length = $endLine - $startLine + 1;
+
+        return implode('', array_slice($lines, $startLine - 1, $length));
+    }
+
+    /**
+     * Parse validation rules from source code.
+     */
+    protected function parseRulesFromSource(string $source): array
+    {
+        $rules = [];
+
+        // Match array key => value patterns like 'field' => 'required|string'
+        // or 'field' => ['required', 'string']
+        preg_match_all("/['\"](\w+(?:\.\*?)?)['\"]\\s*=>\\s*(?:['\"]([^'\"]+)['\"]|\\[([^\\]]+)\\])/", $source, $matches, PREG_SET_ORDER);
+
+        foreach ($matches as $match) {
+            $field = $match[1];
+            $ruleString = $match[2] ?? $match[3] ?? '';
+
+            // Skip nested/wildcard fields for now
+            if (str_contains($field, '.')) {
+                continue;
+            }
+
+            if (! empty($ruleString)) {
+                // Parse pipe-separated rules or array items
+                if (str_contains($ruleString, '|')) {
+                    $rules[$field] = explode('|', $ruleString);
+                } else {
+                    // Array format: 'required', 'string', etc.
+                    preg_match_all("/['\"]([^'\"]+)['\"]/", $ruleString, $ruleMatches);
+                    $rules[$field] = $ruleMatches[1] ?? [$ruleString];
+                }
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Build OpenAPI schema from validation rules.
+     */
+    protected function buildSchemaFromRules(array $rules, ReflectionClass $classReflection): array
+    {
+        $properties = [];
+        $required = [];
+
+        foreach ($rules as $field => $fieldRules) {
+            if (is_string($fieldRules)) {
+                $fieldRules = explode('|', $fieldRules);
+            }
+
+            $property = $this->convertRulesToSchema($fieldRules);
+            $properties[$field] = $property;
+
+            // Check if required
+            if (in_array('required', $fieldRules, true)) {
+                $required[] = $field;
+            }
+        }
+
+        $schema = [
+            'type' => 'object',
+            'properties' => $properties,
+        ];
+
+        if (! empty($required)) {
+            $schema['required'] = $required;
+        }
+
+        $requestBody = [
+            'required' => true,
+            'content' => [
+                'application/json' => [
+                    'schema' => $schema,
+                ],
+            ],
+        ];
+
+        // Add description from class docblock
+        $docComment = $classReflection->getDocComment();
+        if ($docComment) {
+            preg_match('/\/\*\*\s*\n\s*\*\s*(.+?)(?:\n\s*\*\s*\n|\n\s*\*\s*@)/s', $docComment, $matches);
+            if (isset($matches[1])) {
+                $requestBody['description'] = trim(preg_replace('/\s*\n\s*\*\s*/', ' ', $matches[1]));
+            }
+        }
+
+        return $requestBody;
+    }
+
+    /**
+     * Convert Laravel validation rules to OpenAPI schema.
+     */
+    protected function convertRulesToSchema(array $rules): array
+    {
+        $schema = ['type' => 'string'];
+
+        foreach ($rules as $rule) {
+            $rule = is_string($rule) ? $rule : '';
+            $ruleLower = strtolower($rule);
+
+            // Type detection
+            if (in_array($ruleLower, ['integer', 'int', 'numeric'])) {
+                $schema['type'] = 'integer';
+            } elseif (in_array($ruleLower, ['boolean', 'bool'])) {
+                $schema['type'] = 'boolean';
+            } elseif ($ruleLower === 'array') {
+                $schema['type'] = 'array';
+                $schema['items'] = ['type' => 'string'];
+            } elseif ($ruleLower === 'json' || $ruleLower === 'object') {
+                $schema['type'] = 'object';
+            } elseif (in_array($ruleLower, ['decimal', 'numeric'])) {
+                $schema['type'] = 'number';
+            }
+
+            // Format detection
+            if ($ruleLower === 'email') {
+                $schema['format'] = 'email';
+            } elseif ($ruleLower === 'url') {
+                $schema['format'] = 'uri';
+            } elseif ($ruleLower === 'date') {
+                $schema['format'] = 'date';
+            } elseif (str_starts_with($ruleLower, 'date_format:')) {
+                $schema['format'] = 'date-time';
+            } elseif ($ruleLower === 'uuid') {
+                $schema['format'] = 'uuid';
+            } elseif ($ruleLower === 'ip' || $ruleLower === 'ipv4') {
+                $schema['format'] = 'ipv4';
+            } elseif ($ruleLower === 'ipv6') {
+                $schema['format'] = 'ipv6';
+            }
+
+            // Constraints
+            if (str_starts_with($ruleLower, 'min:')) {
+                $min = (int) substr($rule, 4);
+                if ($schema['type'] === 'string') {
+                    $schema['minLength'] = $min;
+                } elseif (in_array($schema['type'], ['integer', 'number'])) {
+                    $schema['minimum'] = $min;
+                }
+            } elseif (str_starts_with($ruleLower, 'max:')) {
+                $max = (int) substr($rule, 4);
+                if ($schema['type'] === 'string') {
+                    $schema['maxLength'] = $max;
+                } elseif (in_array($schema['type'], ['integer', 'number'])) {
+                    $schema['maximum'] = $max;
+                }
+            } elseif (str_starts_with($ruleLower, 'in:')) {
+                $values = explode(',', substr($rule, 3));
+                $schema['enum'] = $values;
+            } elseif (str_starts_with($ruleLower, 'regex:')) {
+                $pattern = substr($rule, 6);
+                // Clean up regex delimiters
+                $pattern = preg_replace('/^\/(.+)\/[a-z]*$/', '$1', $pattern);
+                $schema['pattern'] = $pattern;
+            }
+
+            // Nullable
+            if ($ruleLower === 'nullable') {
+                $schema['nullable'] = true;
+            }
+        }
+
+        return $schema;
     }
 
     /**
@@ -539,7 +868,13 @@ class OpenApiGenerator
         $methodName = strtolower($reflection->getName());
         $httpMethods = array_map('strtoupper', $route->methods());
 
-        // Analyze method name and HTTP method to infer responses
+        // First, try to detect ApiResponse method calls from source code
+        $sourceResponses = $this->detectApiResponseCalls($reflection);
+        if (! empty($sourceResponses)) {
+            return $sourceResponses;
+        }
+
+        // Fallback: Analyze method name and HTTP method to infer responses
         $responses = [];
 
         // Success response based on method name
@@ -671,6 +1006,80 @@ class OpenApiGenerator
                 'content' => [
                     'application/json' => [
                         'schema' => ['$ref' => '#/components/schemas/SuccessResponse'],
+                    ],
+                ],
+            ];
+        }
+
+        return $responses;
+    }
+
+    /**
+     * Detect ApiResponse method calls from source code.
+     */
+    protected function detectApiResponseCalls(ReflectionMethod $reflection): array
+    {
+        $source = $this->getMethodSource($reflection);
+        $responses = [];
+
+        // Map of ApiResponse methods to their status codes and descriptions
+        $methodMapping = [
+            'success' => ['status' => 200, 'description' => 'Successful response', 'schema' => 'SuccessResponse'],
+            'created' => ['status' => 201, 'description' => 'Resource created successfully', 'schema' => 'SuccessResponse'],
+            'accepted' => ['status' => 202, 'description' => 'Request accepted for processing', 'schema' => 'SuccessResponse'],
+            'noContent' => ['status' => 204, 'description' => 'No content'],
+            'badRequest' => ['status' => 400, 'description' => 'Bad request', 'schema' => 'ErrorResponse'],
+            'unauthorized' => ['status' => 401, 'description' => 'Unauthorized', 'schema' => 'ErrorResponse'],
+            'forbidden' => ['status' => 403, 'description' => 'Forbidden', 'schema' => 'ErrorResponse'],
+            'notFound' => ['status' => 404, 'description' => 'Resource not found', 'schema' => 'ErrorResponse'],
+            'methodNotAllowed' => ['status' => 405, 'description' => 'Method not allowed', 'schema' => 'ErrorResponse'],
+            'conflict' => ['status' => 409, 'description' => 'Conflict', 'schema' => 'ErrorResponse'],
+            'unprocessable' => ['status' => 422, 'description' => 'Unprocessable entity', 'schema' => 'ValidationErrorResponse'],
+            'validationError' => ['status' => 422, 'description' => 'Validation failed', 'schema' => 'ValidationErrorResponse'],
+            'tooManyRequests' => ['status' => 429, 'description' => 'Too many requests', 'schema' => 'ErrorResponse'],
+            'serverError' => ['status' => 500, 'description' => 'Internal server error', 'schema' => 'ErrorResponse'],
+            'serviceUnavailable' => ['status' => 503, 'description' => 'Service unavailable', 'schema' => 'ErrorResponse'],
+        ];
+
+        // Detect ApiResponse::method() or $this->method() calls
+        foreach ($methodMapping as $method => $config) {
+            // Match patterns like: ApiResponse::success, $this->success, ->success(
+            $patterns = [
+                "/ApiResponse::{$method}\s*\(/i",
+                "/\\\$this->{$method}\s*\(/i",
+                "/->\\s*{$method}\s*\(/i",
+            ];
+
+            foreach ($patterns as $pattern) {
+                if (preg_match($pattern, $source)) {
+                    $statusCode = (string) $config['status'];
+
+                    if (! isset($responses[$statusCode])) {
+                        $response = ['description' => $config['description']];
+
+                        if (isset($config['schema'])) {
+                            $response['content'] = [
+                                'application/json' => [
+                                    'schema' => ['$ref' => '#/components/schemas/' . $config['schema']],
+                                ],
+                            ];
+                        }
+
+                        $responses[$statusCode] = $response;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        // Detect paginate() calls for paginated responses
+        if (preg_match('/->paginate\s*\(|->cursorPaginate\s*\(/i', $source)) {
+            $responses['200'] = [
+                'description' => 'Paginated results',
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/PaginatedResponse'],
                     ],
                 ],
             ];
