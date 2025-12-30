@@ -40,6 +40,7 @@ class SwaggerController extends Controller
     protected function getSwaggerUIHtml(string $title, string $specUrl, string $appName, ?string $appLogo): string
     {
         $themeColor = config('api-response.openapi.theme_color', '#10b981');
+        $faviconUrl = $appLogo ?: 'https://static1.smartbear.co/swagger/media/assets/swagger_fav.png';
         $logoHtml = $appLogo
             ? "<img src=\"{$appLogo}\" alt=\"{$appName}\" class=\"app-logo\">"
             : "<div class=\"app-logo-placeholder\">" . strtoupper(substr($appName, 0, 2)) . "</div>";
@@ -51,7 +52,7 @@ class SwaggerController extends Controller
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{$title}</title>
-    <link rel="icon" type="image/png" href="https://static1.smartbear.co/swagger/media/assets/swagger_fav.png">
+    <link rel="icon" type="image/png" href="{$faviconUrl}">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -879,30 +880,30 @@ class SwaggerController extends Controller
 
         .swagger-ui .model-container {
             background: var(--bg-elevated) !important;
-            border-radius: 12px !important;
-            margin: 16px !important;
+            border-radius: 8px !important;
+            margin: 12px !important;
             border: 1px solid var(--border-color) !important;
             overflow: hidden;
         }
 
         .swagger-ui .model-box {
             background: var(--bg-elevated) !important;
-            padding: 20px !important;
+            padding: 12px 16px !important;
         }
 
         .swagger-ui .model {
             color: var(--text-secondary) !important;
             font-family: 'JetBrains Mono', monospace !important;
             font-size: 13px !important;
-            line-height: 1.8 !important;
+            line-height: 1.5 !important;
         }
 
         .swagger-ui .model-title {
             color: var(--text-primary) !important;
             font-family: 'Inter', sans-serif !important;
             font-weight: 600 !important;
-            font-size: 15px !important;
-            padding: 16px 20px !important;
+            font-size: 14px !important;
+            padding: 10px 16px !important;
             background: var(--bg-elevated) !important;
             border-bottom: 1px solid var(--border-color) !important;
             margin: 0 !important;
@@ -926,12 +927,17 @@ class SwaggerController extends Controller
 
         /* Schema property rows */
         .swagger-ui .model .property {
-            padding: 8px 0 !important;
+            padding: 4px 0 !important;
             border-bottom: 1px solid var(--border-subtle) !important;
         }
 
         .swagger-ui .model .property:last-child {
             border-bottom: none !important;
+        }
+
+        .swagger-ui .model-box-control,
+        .swagger-ui .model-box-control:first-of-type {
+            padding: 8px 16px !important;
         }
 
         .swagger-ui .model .property-name {
