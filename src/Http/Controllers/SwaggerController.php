@@ -53,13 +53,13 @@ class SwaggerController extends Controller
         :root {
             --primary: {$themeColor};
             --primary-dark: #059669;
-            --primary-light: #34d399;
-            --bg-dark: #1a1a2e;
-            --bg-card: #16213e;
-            --bg-input: #0f3460;
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --border-color: #2d3748;
+            --primary-light: #047857;
+            --bg-light: #ffffff;
+            --bg-card: #f8fafc;
+            --bg-input: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
@@ -76,7 +76,7 @@ class SwaggerController extends Controller
 
         body {
             margin: 0;
-            background: var(--bg-dark);
+            background: var(--bg-light);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text-primary);
             min-height: 100vh;
@@ -84,7 +84,7 @@ class SwaggerController extends Controller
 
         /* Custom Header */
         .custom-header {
-            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             border-bottom: 1px solid var(--border-color);
             padding: 0;
             position: sticky;
@@ -110,12 +110,12 @@ class SwaggerController extends Controller
         .swagger-logo {
             width: 40px;
             height: 40px;
-            background: var(--primary);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
         }
 
         .swagger-logo svg {
@@ -132,13 +132,13 @@ class SwaggerController extends Controller
         .header-title h1 {
             font-size: 20px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #ffffff;
             letter-spacing: -0.5px;
         }
 
         .header-title span {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: rgba(255, 255, 255, 0.8);
             margin-top: 2px;
         }
 
@@ -158,18 +158,18 @@ class SwaggerController extends Controller
         }
 
         .badge-version {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--primary-light);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .badge-oas {
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Swagger UI Overrides - Dark Theme */
+        /* Swagger UI Overrides - Light Theme with Green */
         .swagger-ui {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
@@ -184,13 +184,15 @@ class SwaggerController extends Controller
         .swagger-ui .information-container {
             background: var(--bg-card) !important;
             border-radius: 12px;
-            margin: 24px 0;
-            padding: 24px !important;
+            margin: 24px auto !important;
+            padding: 32px !important;
             border: 1px solid var(--border-color);
+            max-width: 800px;
+            text-align: center;
         }
 
         .swagger-ui .info {
-            margin: 0 !important;
+            margin: 0 auto !important;
         }
 
         .swagger-ui .info .title {
@@ -202,6 +204,7 @@ class SwaggerController extends Controller
 
         .swagger-ui .info .title small {
             background: var(--primary) !important;
+            color: white !important;
             border-radius: 6px;
             padding: 4px 8px;
             font-size: 12px;
@@ -215,10 +218,15 @@ class SwaggerController extends Controller
             color: var(--text-secondary) !important;
             font-size: 14px !important;
             line-height: 1.6 !important;
+            text-align: center;
         }
 
         .swagger-ui .info a {
-            color: var(--primary-light) !important;
+            color: var(--primary) !important;
+        }
+
+        .swagger-ui .info a:hover {
+            color: var(--primary-dark) !important;
         }
 
         .swagger-ui .scheme-container {
@@ -278,7 +286,7 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .opblock-tag:hover {
-            background: rgba(255, 255, 255, 0.02) !important;
+            background: rgba(16, 185, 129, 0.05) !important;
         }
 
         .swagger-ui .opblock-tag svg {
@@ -287,11 +295,11 @@ class SwaggerController extends Controller
 
         /* Operation Blocks */
         .swagger-ui .opblock {
-            background: var(--bg-card) !important;
+            background: var(--bg-light) !important;
             border: 1px solid var(--border-color) !important;
             border-radius: 12px !important;
             margin-bottom: 12px !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
             overflow: hidden;
         }
 
@@ -327,19 +335,19 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .opblock.opblock-get {
-            border-color: rgba(16, 185, 129, 0.3) !important;
+            border-left: 4px solid var(--success) !important;
         }
         .swagger-ui .opblock.opblock-post {
-            border-color: rgba(59, 130, 246, 0.3) !important;
+            border-left: 4px solid var(--info) !important;
         }
         .swagger-ui .opblock.opblock-put {
-            border-color: rgba(245, 158, 11, 0.3) !important;
+            border-left: 4px solid var(--warning) !important;
         }
         .swagger-ui .opblock.opblock-delete {
-            border-color: rgba(239, 68, 68, 0.3) !important;
+            border-left: 4px solid var(--danger) !important;
         }
         .swagger-ui .opblock.opblock-patch {
-            border-color: rgba(139, 92, 246, 0.3) !important;
+            border-left: 4px solid var(--purple) !important;
         }
 
         .swagger-ui .opblock .opblock-summary-path {
@@ -355,11 +363,11 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .opblock-body {
-            background: rgba(0, 0, 0, 0.2) !important;
+            background: var(--bg-card) !important;
         }
 
         .swagger-ui .opblock-section-header {
-            background: rgba(0, 0, 0, 0.3) !important;
+            background: var(--bg-input) !important;
             box-shadow: none !important;
         }
 
@@ -385,7 +393,7 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .parameter__type {
-            color: var(--primary-light) !important;
+            color: var(--primary) !important;
             font-family: 'JetBrains Mono', monospace !important;
         }
 
@@ -400,7 +408,7 @@ class SwaggerController extends Controller
 
         .swagger-ui .parameters-col_description input,
         .swagger-ui .parameters-col_description textarea {
-            background: var(--bg-input) !important;
+            background: var(--bg-light) !important;
             color: var(--text-primary) !important;
             border: 1px solid var(--border-color) !important;
             border-radius: 6px !important;
@@ -459,8 +467,8 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .response code {
-            background: var(--bg-dark) !important;
-            color: var(--primary-light) !important;
+            background: var(--bg-input) !important;
+            color: var(--primary) !important;
             border-radius: 4px;
             padding: 2px 6px;
         }
@@ -468,7 +476,7 @@ class SwaggerController extends Controller
         /* Code Blocks */
         .swagger-ui .highlight-code,
         .swagger-ui .microlight {
-            background: var(--bg-dark) !important;
+            background: #1e293b !important;
             border-radius: 8px !important;
             border: 1px solid var(--border-color) !important;
             font-family: 'JetBrains Mono', monospace !important;
@@ -476,7 +484,7 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .microlight {
-            color: var(--primary-light) !important;
+            color: #34d399 !important;
         }
 
         /* Models Section */
@@ -492,7 +500,7 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .model-container {
-            background: var(--bg-dark) !important;
+            background: var(--bg-input) !important;
             border-radius: 8px;
             margin: 8px 0;
         }
@@ -508,7 +516,7 @@ class SwaggerController extends Controller
         }
 
         .swagger-ui .prop-type {
-            color: var(--primary-light) !important;
+            color: var(--primary) !important;
         }
 
         /* Scrollbar */
@@ -518,7 +526,7 @@ class SwaggerController extends Controller
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--bg-dark);
+            background: var(--bg-card);
         }
 
         ::-webkit-scrollbar-thumb {
@@ -542,14 +550,14 @@ class SwaggerController extends Controller
         }
 
         .powered-by a {
-            color: var(--primary-light);
+            color: var(--primary);
             text-decoration: none;
             font-weight: 500;
             transition: color 0.2s;
         }
 
         .powered-by a:hover {
-            color: var(--primary);
+            color: var(--primary-dark);
             text-decoration: underline;
         }
 
