@@ -171,10 +171,10 @@ class SwaggerController extends Controller
         }
 
         .badge {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             background: var(--bg-elevated);
@@ -183,9 +183,10 @@ class SwaggerController extends Controller
         }
 
         .badge-primary {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--primary-light);
-            border-color: rgba(16, 185, 129, 0.2);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 14px var(--primary-glow);
         }
 
         /* Auth Button */
@@ -544,28 +545,34 @@ class SwaggerController extends Controller
             display: none !important;
         }
 
-        /* Operation Tags */
+        /* Operation Tags - Category Headers */
         .swagger-ui .opblock-tag-section {
-            margin-bottom: 24px;
+            margin-bottom: 32px;
+            background: var(--bg-card) !important;
+            border-radius: 16px !important;
+            border: 1px solid var(--border-color) !important;
+            overflow: hidden;
         }
 
         .swagger-ui .opblock-tag {
             color: var(--text-primary) !important;
             font-family: 'Inter', sans-serif !important;
-            font-weight: 600 !important;
-            font-size: 16px !important;
+            font-weight: 700 !important;
+            font-size: 18px !important;
             border: none !important;
-            padding: 16px 0 !important;
-            background: transparent !important;
-            transition: color 0.2s;
+            padding: 20px 24px !important;
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            transition: all 0.2s;
+            margin: 0 !important;
         }
 
         .swagger-ui .opblock-tag:hover {
-            color: var(--primary-light) !important;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, var(--bg-card) 100%) !important;
         }
 
         .swagger-ui .opblock-tag svg {
-            fill: var(--text-secondary) !important;
+            fill: var(--primary) !important;
             transition: fill 0.2s;
         }
 
@@ -576,28 +583,41 @@ class SwaggerController extends Controller
         .swagger-ui .opblock-tag small {
             color: var(--text-muted) !important;
             font-size: 12px !important;
+            background: var(--bg-input) !important;
+            padding: 4px 10px !important;
+            border-radius: 20px !important;
+            margin-left: 12px !important;
+        }
+
+        .swagger-ui .opblock-tag-section .operation-tag-content {
+            padding: 16px !important;
+            background: var(--bg-card) !important;
         }
 
         /* Operation Blocks */
         .swagger-ui .opblock {
-            background: var(--bg-card) !important;
+            background: var(--bg-elevated) !important;
             border: 1px solid var(--border-color) !important;
-            border-radius: 12px !important;
-            margin-bottom: 12px !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+            border-radius: 10px !important;
+            margin-bottom: 8px !important;
+            box-shadow: none !important;
             overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
         }
 
         .swagger-ui .opblock:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 1px var(--primary), 0 4px 12px rgba(16, 185, 129, 0.15) !important;
+        }
+
+        .swagger-ui .opblock:last-child {
+            margin-bottom: 0 !important;
         }
 
         .swagger-ui .opblock .opblock-summary {
             border: none !important;
-            padding: 16px 20px !important;
-            background: var(--bg-card) !important;
+            padding: 14px 16px !important;
+            background: var(--bg-elevated) !important;
         }
 
         .swagger-ui .opblock .opblock-summary-method {
@@ -630,18 +650,23 @@ class SwaggerController extends Controller
 
         .swagger-ui .opblock.opblock-get {
             border-left: 3px solid var(--get) !important;
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-elevated) 100%) !important;
         }
         .swagger-ui .opblock.opblock-post {
             border-left: 3px solid var(--post) !important;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, var(--bg-elevated) 100%) !important;
         }
         .swagger-ui .opblock.opblock-put {
             border-left: 3px solid var(--put) !important;
+            background: linear-gradient(90deg, rgba(245, 158, 11, 0.05) 0%, var(--bg-elevated) 100%) !important;
         }
         .swagger-ui .opblock.opblock-delete {
             border-left: 3px solid var(--delete) !important;
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.05) 0%, var(--bg-elevated) 100%) !important;
         }
         .swagger-ui .opblock.opblock-patch {
             border-left: 3px solid var(--patch) !important;
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.05) 0%, var(--bg-elevated) 100%) !important;
         }
 
         .swagger-ui .opblock .opblock-summary-path {
@@ -845,22 +870,36 @@ class SwaggerController extends Controller
         /* Models Section */
         .swagger-ui section.models {
             border: 1px solid var(--border-color) !important;
-            border-radius: 12px !important;
+            border-radius: 16px !important;
             background: var(--bg-card) !important;
             margin-top: 32px;
+            overflow: hidden;
         }
 
         .swagger-ui section.models h4 {
             color: var(--text-primary) !important;
             font-family: 'Inter', sans-serif !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            padding: 20px 24px !important;
+            background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-card) 100%) !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            margin: 0 !important;
+        }
+
+        .swagger-ui section.models h4 svg {
+            fill: var(--primary) !important;
         }
 
         .swagger-ui .model-container {
             background: var(--bg-elevated) !important;
-            border-radius: 8px;
-            margin: 8px 0;
+            border-radius: 10px;
+            margin: 8px 16px !important;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        .swagger-ui .model-box {
+            background: var(--bg-elevated) !important;
         }
 
         .swagger-ui .model {
@@ -872,6 +911,7 @@ class SwaggerController extends Controller
         .swagger-ui .model-title {
             color: var(--text-primary) !important;
             font-family: 'Inter', sans-serif !important;
+            font-weight: 600 !important;
         }
 
         .swagger-ui .prop-type {
