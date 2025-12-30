@@ -349,7 +349,9 @@ class UserControllerTest extends TestCase
 
 ## OpenAPI/Swagger Documentation
 
-The package automatically generates OpenAPI 3.0 documentation from your API routes - **no additional coding required!**
+The package automatically generates OpenAPI 3.0 documentation from your API routes with a beautiful, modern dark-themed UI - **no additional coding required!**
+
+![Swagger UI Screenshot](docs/images/swagger-ui-screenshot.png)
 
 ### Zero-Configuration Auto-Generation
 
@@ -371,6 +373,65 @@ Simply visit `/api-docs` in your browser to see the interactive Swagger UI:
 ```
 http://your-app.com/api-docs
 ```
+
+### Custom Swagger UI Features
+
+The package includes a beautifully designed custom Swagger UI with:
+
+- **Modern Dark Theme** - Clean black background with customizable accent color
+- **Custom Branding** - Display your app name and logo in the header
+- **Hero Section** - Welcome message with live API statistics (endpoints, categories, schemas)
+- **Search Bar** - Filter APIs by path, method, or description
+- **Authorization Modal** - Support for Bearer Token and API Key authentication with localStorage persistence
+- **Responsive Design** - Works great on desktop and mobile devices
+- **Method Badges** - Color-coded HTTP method indicators (GET, POST, PUT, DELETE, PATCH)
+
+### Customization
+
+Configure the Swagger UI appearance in your `.env` file:
+
+```env
+# App branding
+API_DOCS_APP_NAME=My Awesome API
+API_DOCS_APP_LOGO=https://example.com/logo.png
+
+# Theme color (default: #10b981 - green)
+API_DOCS_THEME_COLOR=#10b981
+
+# Enable/disable documentation
+API_DOCS_ENABLED=true
+```
+
+Or in your config file:
+
+```php
+// config/api-response.php
+
+'openapi' => [
+    'enabled' => env('API_DOCS_ENABLED', true),
+    'title' => env('API_DOCS_TITLE', 'API Documentation'),
+    'description' => 'Auto-generated API documentation',
+    'version' => '1.0.0',
+    'route_prefix' => 'api',
+    'docs_route' => 'api-docs',
+
+    // Custom branding
+    'app_name' => env('API_DOCS_APP_NAME', env('APP_NAME', 'API')),
+    'app_logo' => env('API_DOCS_APP_LOGO', null),
+    'theme_color' => env('API_DOCS_THEME_COLOR', '#10b981'),
+
+    'servers' => [
+        ['url' => env('APP_URL'), 'description' => 'API Server'],
+    ],
+],
+```
+
+### API Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api-docs` | Interactive Swagger UI |
+| `GET /api-docs/openapi.json` | Raw OpenAPI 3.0 specification |
 
 ### Generate Static File
 
@@ -444,25 +505,6 @@ Use these in `#[ApiResponse(ref: '...')]`:
 - `ErrorResponse` - Standard error response
 - `PaginatedResponse` - Paginated list response
 - `ValidationErrorResponse` - Validation error with field errors
-
-### OpenAPI Configuration
-
-```php
-// config/api-response.php
-
-'openapi' => [
-    'enabled' => env('API_DOCS_ENABLED', true),
-    'title' => env('API_DOCS_TITLE', 'API Documentation'),
-    'description' => 'Auto-generated API documentation',
-    'version' => '1.0.0',
-    'route_prefix' => 'api',
-    'docs_route' => 'api-docs',
-    'theme_color' => '#3b82f6',
-    'servers' => [
-        ['url' => env('APP_URL'), 'description' => 'API Server'],
-    ],
-],
-```
 
 ## Configuration
 
