@@ -188,6 +188,39 @@ class SwaggerController extends Controller
             border-color: rgba(16, 185, 129, 0.2);
         }
 
+        /* Auth Button */
+        .auth-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-btn:hover {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .auth-btn.authorized {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary-light);
+        }
+
+        .auth-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         /* Hero Section */
         .hero-section {
             background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 100%);
@@ -265,6 +298,222 @@ class SwaggerController extends Controller
             margin-top: 4px;
         }
 
+        /* Custom Search Bar */
+        .search-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 32px;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Authorization Modal */
+        .auth-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .auth-modal-overlay.active {
+            display: flex;
+        }
+
+        .auth-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 480px;
+            margin: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .auth-modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .auth-modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .auth-modal-close:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .auth-type-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .auth-type-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-type-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .auth-type-btn.active {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: var(--primary);
+            color: var(--primary-light);
+        }
+
+        .auth-input-group {
+            margin-bottom: 20px;
+        }
+
+        .auth-input-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .auth-input::placeholder {
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .auth-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .auth-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .auth-modal-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-modal-btn-primary {
+            background: var(--primary);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .auth-modal-btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .auth-modal-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .auth-modal-btn-secondary:hover {
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
         /* Swagger UI Overrides */
         #swagger-ui {
             background: var(--bg-dark) !important;
@@ -283,84 +532,16 @@ class SwaggerController extends Controller
 
         .swagger-ui .wrapper {
             max-width: 1400px;
-            padding: 32px;
+            padding: 0 32px 32px;
         }
 
+        /* Hide default Swagger elements */
         .swagger-ui .topbar,
-        .swagger-ui .information-container {
-            display: none !important;
-        }
-
-        /* Scheme Container */
-        .swagger-ui .scheme-container {
-            background: var(--bg-card) !important;
-            box-shadow: none !important;
-            border-radius: 12px;
-            padding: 20px 24px !important;
-            margin-bottom: 32px;
-            border: 1px solid var(--border-color);
-        }
-
-        .swagger-ui .schemes-title,
-        .swagger-ui label {
-            color: var(--text-secondary) !important;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 12px !important;
-            font-weight: 500 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-        }
-
-        .swagger-ui select {
-            background: var(--bg-input) !important;
-            color: var(--text-primary) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 8px !important;
-            padding: 10px 14px !important;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 13px !important;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .swagger-ui select:hover {
-            border-color: var(--primary) !important;
-        }
-
-        /* Filter Input */
+        .swagger-ui .information-container,
+        .swagger-ui .scheme-container,
         .swagger-ui .filter-container,
-        .swagger-ui .filter-wrapper,
         .swagger-ui .filter {
-            background: var(--bg-card) !important;
-            border-radius: 12px;
-            padding: 16px 24px;
-            margin-bottom: 32px;
-            border: 1px solid var(--border-color);
-        }
-
-        .swagger-ui .filter input,
-        .swagger-ui .operation-filter-input {
-            background: var(--bg-input) !important;
-            color: var(--text-primary) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 8px !important;
-            padding: 12px 16px !important;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 14px !important;
-            width: 100%;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .swagger-ui .filter input:focus,
-        .swagger-ui .operation-filter-input:focus {
-            border-color: var(--primary) !important;
-            box-shadow: 0 0 0 3px var(--primary-glow) !important;
-            outline: none !important;
-        }
-
-        .swagger-ui .filter input::placeholder,
-        .swagger-ui .operation-filter-input::placeholder {
-            color: var(--text-muted) !important;
+            display: none !important;
         }
 
         /* Operation Tags */
@@ -560,6 +741,21 @@ class SwaggerController extends Controller
             border-color: var(--primary) !important;
             box-shadow: 0 0 0 3px var(--primary-glow) !important;
             outline: none !important;
+        }
+
+        .swagger-ui select {
+            background: var(--bg-input) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 8px !important;
+            padding: 10px 14px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 13px !important;
+        }
+
+        .swagger-ui label {
+            color: var(--text-secondary) !important;
+            font-family: 'Inter', sans-serif !important;
         }
 
         /* Buttons */
@@ -765,16 +961,9 @@ class SwaggerController extends Controller
             .swagger-ui .wrapper {
                 padding: 16px;
             }
-        }
-
-        /* Loading Animation */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .loading {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            .search-container {
+                padding: 16px;
+            }
         }
     </style>
 </head>
@@ -789,8 +978,13 @@ class SwaggerController extends Controller
                 </div>
             </div>
             <div class="header-right">
+                <button class="auth-btn" id="auth-btn" onclick="openAuthModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span id="auth-btn-text">Authorize</span>
+                </button>
                 <span class="badge badge-primary">OpenAPI 3.0</span>
-                <span class="badge">v1.0.0</span>
             </div>
         </div>
     </div>
@@ -819,15 +1013,179 @@ class SwaggerController extends Controller
         </div>
     </div>
 
+    <!-- Custom Search Bar -->
+    <div class="search-container">
+        <div class="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" class="search-input" id="api-search" placeholder="Search APIs by path, method, or description..." oninput="filterOperations(this.value)">
+        </div>
+    </div>
+
     <div id="swagger-ui"></div>
 
     <div class="powered-by">
         Built with <a href="https://github.com/stackmasteraliza/laravel-api-response-builder" target="_blank">Laravel API Response Builder</a>
     </div>
 
+    <!-- Authorization Modal -->
+    <div class="auth-modal-overlay" id="auth-modal">
+        <div class="auth-modal">
+            <div class="auth-modal-header">
+                <h3 class="auth-modal-title">Authorization</h3>
+                <button class="auth-modal-close" onclick="closeAuthModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="auth-type-selector">
+                <button class="auth-type-btn active" data-type="bearer" onclick="selectAuthType('bearer')">Bearer Token</button>
+                <button class="auth-type-btn" data-type="apikey" onclick="selectAuthType('apikey')">API Key</button>
+            </div>
+
+            <div id="bearer-auth" class="auth-content">
+                <div class="auth-input-group">
+                    <label class="auth-input-label">Bearer Token</label>
+                    <input type="text" class="auth-input" id="bearer-token" placeholder="Enter your access token">
+                    <p class="auth-hint">Token will be sent as: Authorization: Bearer &lt;token&gt;</p>
+                </div>
+            </div>
+
+            <div id="apikey-auth" class="auth-content" style="display: none;">
+                <div class="auth-input-group">
+                    <label class="auth-input-label">Header Name</label>
+                    <input type="text" class="auth-input" id="apikey-header" placeholder="X-API-Key" value="X-API-Key">
+                </div>
+                <div class="auth-input-group">
+                    <label class="auth-input-label">API Key</label>
+                    <input type="text" class="auth-input" id="apikey-value" placeholder="Enter your API key">
+                </div>
+            </div>
+
+            <div class="auth-modal-actions">
+                <button class="auth-modal-btn auth-modal-btn-secondary" onclick="clearAuth()">Clear</button>
+                <button class="auth-modal-btn auth-modal-btn-primary" onclick="applyAuth()">Apply</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
     <script>
+        let currentAuthType = 'bearer';
+        let authToken = localStorage.getItem('api_auth_token') || '';
+        let authType = localStorage.getItem('api_auth_type') || 'bearer';
+        let apiKeyHeader = localStorage.getItem('api_auth_header') || 'X-API-Key';
+
+        // Initialize auth button state
+        document.addEventListener('DOMContentLoaded', function() {
+            if (authToken) {
+                updateAuthButton(true);
+            }
+        });
+
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.add('active');
+            if (authToken) {
+                if (authType === 'bearer') {
+                    document.getElementById('bearer-token').value = authToken;
+                } else {
+                    document.getElementById('apikey-value').value = authToken;
+                    document.getElementById('apikey-header').value = apiKeyHeader;
+                }
+                selectAuthType(authType);
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.remove('active');
+        }
+
+        function selectAuthType(type) {
+            currentAuthType = type;
+            document.querySelectorAll('.auth-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === type);
+            });
+            document.getElementById('bearer-auth').style.display = type === 'bearer' ? 'block' : 'none';
+            document.getElementById('apikey-auth').style.display = type === 'apikey' ? 'block' : 'none';
+        }
+
+        function applyAuth() {
+            if (currentAuthType === 'bearer') {
+                authToken = document.getElementById('bearer-token').value;
+            } else {
+                authToken = document.getElementById('apikey-value').value;
+                apiKeyHeader = document.getElementById('apikey-header').value;
+            }
+            authType = currentAuthType;
+
+            // Save to localStorage
+            localStorage.setItem('api_auth_token', authToken);
+            localStorage.setItem('api_auth_type', authType);
+            localStorage.setItem('api_auth_header', apiKeyHeader);
+
+            // Update Swagger UI authorization
+            if (window.ui && authToken) {
+                if (authType === 'bearer') {
+                    window.ui.preauthorizeApiKey('bearerAuth', authToken);
+                } else {
+                    window.ui.preauthorizeApiKey('apiKey', authToken);
+                }
+            }
+
+            updateAuthButton(!!authToken);
+            closeAuthModal();
+        }
+
+        function clearAuth() {
+            authToken = '';
+            localStorage.removeItem('api_auth_token');
+            localStorage.removeItem('api_auth_type');
+            localStorage.removeItem('api_auth_header');
+
+            document.getElementById('bearer-token').value = '';
+            document.getElementById('apikey-value').value = '';
+
+            updateAuthButton(false);
+            closeAuthModal();
+        }
+
+        function updateAuthButton(authorized) {
+            const btn = document.getElementById('auth-btn');
+            const text = document.getElementById('auth-btn-text');
+            if (authorized) {
+                btn.classList.add('authorized');
+                text.textContent = 'Authorized';
+            } else {
+                btn.classList.remove('authorized');
+                text.textContent = 'Authorize';
+            }
+        }
+
+        function filterOperations(query) {
+            query = query.toLowerCase();
+            const opblocks = document.querySelectorAll('.swagger-ui .opblock');
+            const tagSections = document.querySelectorAll('.swagger-ui .opblock-tag-section');
+
+            opblocks.forEach(block => {
+                const path = block.querySelector('.opblock-summary-path')?.textContent?.toLowerCase() || '';
+                const method = block.querySelector('.opblock-summary-method')?.textContent?.toLowerCase() || '';
+                const desc = block.querySelector('.opblock-summary-description')?.textContent?.toLowerCase() || '';
+
+                const matches = !query || path.includes(query) || method.includes(query) || desc.includes(query);
+                block.style.display = matches ? '' : 'none';
+            });
+
+            // Hide empty tag sections
+            tagSections.forEach(section => {
+                const visibleOps = section.querySelectorAll('.opblock:not([style*="display: none"])');
+                section.style.display = visibleOps.length > 0 || !query ? '' : 'none';
+            });
+        }
+
         window.onload = function() {
             const ui = SwaggerUIBundle({
                 url: "{$specUrl}",
@@ -844,7 +1202,7 @@ class SwaggerController extends Controller
                 defaultModelsExpandDepth: 1,
                 defaultModelExpandDepth: 1,
                 docExpansion: 'list',
-                filter: true,
+                filter: false,
                 showExtensions: true,
                 showCommonExtensions: true,
                 tryItOutEnabled: true,
@@ -878,10 +1236,33 @@ class SwaggerController extends Controller
                         .catch(() => {
                             document.getElementById('stat-endpoints').textContent = '-';
                         });
+
+                    // Apply saved authorization
+                    if (authToken) {
+                        setTimeout(() => {
+                            if (authType === 'bearer') {
+                                window.ui.preauthorizeApiKey('bearerAuth', authToken);
+                            }
+                        }, 500);
+                    }
                 }
             });
             window.ui = ui;
         };
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAuthModal();
+            }
+        });
+
+        // Close modal on overlay click
+        document.getElementById('auth-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAuthModal();
+            }
+        });
     </script>
 </body>
 </html>
