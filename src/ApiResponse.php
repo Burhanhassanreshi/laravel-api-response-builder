@@ -253,6 +253,13 @@ class ApiResponse
      */
     protected function toResponse(): JsonResponse
     {
-        return response()->json($this->response, $this->statusCode, $this->headers);
+        $response = $this->response;
+
+        if (config('api-response.include_status_code', true)) {
+            $statusCodeKey = config('api-response.keys.status_code', 'status_code');
+            $response = [$statusCodeKey => $this->statusCode] + $response;
+        }
+
+        return response()->json($response, $this->statusCode, $this->headers);
     }
 }

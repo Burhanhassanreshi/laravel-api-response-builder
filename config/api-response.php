@@ -41,6 +41,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Include Status Code in Response Body
+    |--------------------------------------------------------------------------
+    |
+    | When set to true, the HTTP status code will be included in the JSON
+    | response body. This is useful for clients that cannot easily access
+    | HTTP headers or for debugging purposes.
+    |
+    */
+
+    'include_status_code' => env('API_RESPONSE_INCLUDE_STATUS_CODE', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Response Keys
     |--------------------------------------------------------------------------
     |
@@ -55,6 +68,7 @@ return [
         'data' => 'data',
         'errors' => 'errors',
         'meta' => 'meta',
+        'status_code' => 'status_code',
     ],
 
     /*
