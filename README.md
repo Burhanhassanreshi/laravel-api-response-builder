@@ -383,8 +383,32 @@ The package includes a beautifully designed custom Swagger UI with:
 - **Hero Section** - Welcome message with live API statistics (endpoints, categories, schemas)
 - **Search Bar** - Filter APIs by path, method, or description
 - **Authorization Modal** - Support for Bearer Token and API Key authentication with localStorage persistence
+- **Export Options** - Export API documentation in multiple formats (JSON, YAML, Postman, Insomnia)
 - **Responsive Design** - Works great on desktop and mobile devices
 - **Method Badges** - Color-coded HTTP method indicators (GET, POST, PUT, DELETE, PATCH)
+
+### Export API Documentation
+
+Export your API documentation directly from the Swagger UI to import into your preferred tools. Click the **Export** button in the header to access the following formats:
+
+#### OpenAPI Specification
+- **OpenAPI JSON** - Standard JSON format compatible with any OpenAPI 3.0 tool
+- **OpenAPI YAML** - Human-readable YAML format for easier editing and version control
+
+#### API Client Collections
+- **Postman Collection (v2.1)** - Ready to import into Postman with:
+  - Organized folders by API tags/categories
+  - Pre-configured base URL as collection variable
+  - Request bodies with auto-generated example data
+  - Query parameters, path variables, and headers
+
+- **Insomnia Collection (v4)** - Ready to import into Insomnia with:
+  - Workspace and environment setup
+  - Organized request groups by tags
+  - Base URL as environment variable
+  - Full request configuration
+
+All exports are generated client-side for instant downloads with no server load.
 
 ### Customization
 
