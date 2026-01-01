@@ -1,6 +1,10 @@
-# Laravel API Response Builder
+# Laravel API Toolkit
 
-A clean and consistent API response builder for Laravel applications. This package provides a simple and elegant way to build standardized JSON responses for your APIs.
+### `stackmasteraliza/laravel-api-response`
+
+> The all-in-one Laravel API solution: Standardized Responses + Auto-generated Swagger Docs + Export to Postman & Insomnia
+
+A clean and consistent API response builder for Laravel applications. This package provides a simple and elegant way to build standardized JSON responses for your APIs with zero-config OpenAPI documentation.
 
 ## Features
 
@@ -10,6 +14,7 @@ A clean and consistent API response builder for Laravel applications. This packa
 - Built-in methods for common HTTP status codes
 - Automatic pagination metadata (including cursor pagination)
 - **Auto-generated OpenAPI/Swagger documentation**
+- **Export to Postman, Insomnia, JSON & YAML**
 - Response macros for custom response types
 - Testing helpers for API assertions
 - Exception handler for consistent error responses
