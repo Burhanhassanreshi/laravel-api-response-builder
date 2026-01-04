@@ -35,6 +35,30 @@ class SwaggerController extends Controller
     }
 
     /**
+     * Get versioned OpenAPI specification.
+     */
+    public function versionedSpec(OpenApiGenerator $generator, string $version): JsonResponse
+    {
+        $spec = $generator->generate($version);
+
+        return response()->json($spec);
+    }
+
+    /**
+     * Get available API versions.
+     */
+    public function versions(OpenApiGenerator $generator): JsonResponse
+    {
+        $versions = $generator->getAvailableVersions();
+        $defaultVersion = $generator->getDefaultVersion();
+
+        return response()->json([
+            'versions' => array_values($versions),
+            'default' => $defaultVersion,
+        ]);
+    }
+
+    /**
      * Get the Swagger UI HTML.
      */
     protected function getSwaggerUIHtml(string $title, string $specUrl, string $appName, ?string $appLogo): string
@@ -219,6 +243,149 @@ class SwaggerController extends Controller
         .auth-btn svg {
             width: 16px;
             height: 16px;
+        }
+
+        /* Version Switcher */
+        .version-switcher {
+            position: relative;
+            display: none;
+        }
+
+        .version-switcher.visible {
+            display: block;
+        }
+
+        .version-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .version-btn:hover {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .version-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .version-btn .version-arrow {
+            width: 12px;
+            height: 12px;
+            margin-left: 4px;
+            transition: transform 0.2s;
+        }
+
+        .version-switcher.active .version-arrow {
+            transform: rotate(180deg);
+        }
+
+        .version-badge {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .version-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            min-width: 200px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .version-switcher.active .version-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .version-menu-header {
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .version-menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: left;
+        }
+
+        .version-menu-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .version-menu-item.active {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary);
+        }
+
+        .version-menu-item .version-name {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .version-menu-item .version-title {
+            font-weight: 600;
+        }
+
+        .version-menu-item .version-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .version-menu-item .version-check {
+            width: 16px;
+            height: 16px;
+            color: var(--primary);
+            opacity: 0;
+        }
+
+        .version-menu-item.active .version-check {
+            opacity: 1;
         }
 
         /* Export Dropdown */
@@ -1351,6 +1518,25 @@ class SwaggerController extends Controller
                 </div>
             </div>
             <div class="header-right">
+                <!-- Version Switcher -->
+                <div class="version-switcher" id="version-switcher">
+                    <button class="version-btn" onclick="toggleVersionDropdown()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
+                        </svg>
+                        <span class="version-badge" id="current-version">All</span>
+                        <svg class="version-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="version-menu" id="version-menu">
+                        <div class="version-menu-header">Select API Version</div>
+                        <div id="version-list">
+                            <!-- Versions will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Export Dropdown -->
                 <div class="export-dropdown" id="export-dropdown">
                     <button class="export-btn" onclick="toggleExportDropdown()">
@@ -1512,10 +1698,150 @@ class SwaggerController extends Controller
         let authType = localStorage.getItem('api_auth_type') || 'bearer';
         let apiKeyHeader = localStorage.getItem('api_auth_header') || 'X-API-Key';
 
-        // Initialize auth button state
+        // Versioning state
+        let availableVersions = [];
+        let currentVersion = localStorage.getItem('api_docs_version') || null;
+        const baseSpecUrl = '{$specUrl}';
+        const versionsUrl = baseSpecUrl.replace('/openapi.json', '/versions');
+
+        // Initialize auth button state and load versions
         document.addEventListener('DOMContentLoaded', function() {
             if (authToken) {
                 updateAuthButton(true);
+            }
+            loadVersions();
+        });
+
+        // Version Switcher Functions
+        async function loadVersions() {
+            try {
+                const response = await fetch(versionsUrl);
+                const data = await response.json();
+
+                if (data.versions && data.versions.length > 0) {
+                    availableVersions = data.versions;
+                    renderVersionMenu();
+                    document.getElementById('version-switcher').classList.add('visible');
+
+                    // Set default version if not already set
+                    if (!currentVersion && data.default) {
+                        currentVersion = data.default;
+                        localStorage.setItem('api_docs_version', currentVersion);
+                    }
+
+                    updateVersionBadge();
+                }
+            } catch (error) {
+                console.log('Versioning not enabled or no versions available');
+            }
+        }
+
+        function renderVersionMenu() {
+            const versionList = document.getElementById('version-list');
+            let html = '';
+
+            // Add "All Versions" option
+            html += \`
+                <button class="version-menu-item \${!currentVersion ? 'active' : ''}" onclick="switchVersion(null)">
+                    <div class="version-name">
+                        <span class="version-title">All Versions</span>
+                        <span class="version-desc">Show all API endpoints</span>
+                    </div>
+                    <svg class="version-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
+            \`;
+
+            // Add each version
+            for (const version of availableVersions) {
+                html += \`
+                    <button class="version-menu-item \${currentVersion === version.name ? 'active' : ''}" onclick="switchVersion('\${version.name}')">
+                        <div class="version-name">
+                            <span class="version-title">\${version.title || version.name.toUpperCase()}</span>
+                            <span class="version-desc">\${version.description || ''}</span>
+                        </div>
+                        <svg class="version-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </button>
+                \`;
+            }
+
+            versionList.innerHTML = html;
+        }
+
+        function toggleVersionDropdown() {
+            const dropdown = document.getElementById('version-switcher');
+            dropdown.classList.toggle('active');
+
+            // Close other dropdowns
+            document.getElementById('export-dropdown').classList.remove('active');
+        }
+
+        function switchVersion(version) {
+            currentVersion = version;
+            localStorage.setItem('api_docs_version', version || '');
+
+            updateVersionBadge();
+            renderVersionMenu();
+
+            // Close dropdown
+            document.getElementById('version-switcher').classList.remove('active');
+
+            // Reload Swagger UI with new spec
+            reloadSwaggerUI();
+        }
+
+        function updateVersionBadge() {
+            const badge = document.getElementById('current-version');
+            badge.textContent = currentVersion ? currentVersion.toUpperCase() : 'All';
+        }
+
+        function getSpecUrl() {
+            if (currentVersion) {
+                return baseSpecUrl.replace('/openapi.json', '/' + currentVersion + '/openapi.json');
+            }
+            return baseSpecUrl;
+        }
+
+        function reloadSwaggerUI() {
+            const specUrl = getSpecUrl();
+
+            // Reinitialize Swagger UI
+            window.ui = SwaggerUIBundle({
+                url: specUrl,
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                requestInterceptor: (req) => {
+                    if (authToken) {
+                        if (authType === 'bearer') {
+                            req.headers['Authorization'] = 'Bearer ' + authToken;
+                        } else {
+                            req.headers[apiKeyHeader] = authToken;
+                        }
+                    }
+                    return req;
+                },
+                onComplete: function() {
+                    updateStats();
+                }
+            });
+        }
+
+        // Close version dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const versionSwitcher = document.getElementById('version-switcher');
+            if (versionSwitcher && !versionSwitcher.contains(e.target)) {
+                versionSwitcher.classList.remove('active');
             }
         });
 
@@ -1618,9 +1944,39 @@ class SwaggerController extends Controller
             });
         }
 
+        function updateStats() {
+            const specUrl = getSpecUrl();
+            fetch(specUrl)
+                .then(response => response.json())
+                .then(spec => {
+                    let endpoints = 0;
+                    if (spec.paths) {
+                        Object.values(spec.paths).forEach(path => {
+                            endpoints += Object.keys(path).filter(m =>
+                                ['get', 'post', 'put', 'delete', 'patch'].includes(m)
+                            ).length;
+                        });
+                    }
+                    const tags = spec.tags ? spec.tags.length : 0;
+                    const schemas = spec.components && spec.components.schemas
+                        ? Object.keys(spec.components.schemas).length
+                        : 0;
+
+                    document.getElementById('stat-endpoints').textContent = endpoints;
+                    document.getElementById('stat-tags').textContent = tags || '-';
+                    document.getElementById('stat-schemas').textContent = schemas || '-';
+                })
+                .catch(() => {
+                    document.getElementById('stat-endpoints').textContent = '-';
+                });
+        }
+
         window.onload = function() {
+            // Use versioned URL if a version was previously selected
+            const specUrl = getSpecUrl();
+
             const ui = SwaggerUIBundle({
-                url: "{$specUrl}",
+                url: specUrl,
                 dom_id: '#swagger-ui',
                 deepLinking: true,
                 presets: [
@@ -1644,30 +2000,7 @@ class SwaggerController extends Controller
                     theme: "monokai"
                 },
                 onComplete: function() {
-                    // Fetch spec and update stats
-                    fetch("{$specUrl}")
-                        .then(response => response.json())
-                        .then(spec => {
-                            let endpoints = 0;
-                            if (spec.paths) {
-                                Object.values(spec.paths).forEach(path => {
-                                    endpoints += Object.keys(path).filter(m =>
-                                        ['get', 'post', 'put', 'delete', 'patch'].includes(m)
-                                    ).length;
-                                });
-                            }
-                            const tags = spec.tags ? spec.tags.length : 0;
-                            const schemas = spec.components && spec.components.schemas
-                                ? Object.keys(spec.components.schemas).length
-                                : 0;
-
-                            document.getElementById('stat-endpoints').textContent = endpoints;
-                            document.getElementById('stat-tags').textContent = tags || '-';
-                            document.getElementById('stat-schemas').textContent = schemas || '-';
-                        })
-                        .catch(() => {
-                            document.getElementById('stat-endpoints').textContent = '-';
-                        });
+                    updateStats();
 
                     // Apply saved authorization
                     if (authToken) {
@@ -1701,11 +2034,14 @@ class SwaggerController extends Controller
         // ============================================
 
         let cachedSpec = null;
-        const specUrl = "{$specUrl}";
+        let cachedSpecVersion = null;
 
         function toggleExportDropdown() {
             const dropdown = document.getElementById('export-dropdown');
             dropdown.classList.toggle('active');
+
+            // Close version dropdown
+            document.getElementById('version-switcher').classList.remove('active');
         }
 
         // Close dropdown when clicking outside
@@ -1724,10 +2060,18 @@ class SwaggerController extends Controller
         });
 
         async function getOpenApiSpec() {
+            // Invalidate cache if version changed
+            if (cachedSpecVersion !== currentVersion) {
+                cachedSpec = null;
+            }
+
             if (cachedSpec) return cachedSpec;
+
             try {
+                const specUrl = getSpecUrl();
                 const response = await fetch(specUrl);
                 cachedSpec = await response.json();
+                cachedSpecVersion = currentVersion;
                 return cachedSpec;
             } catch (error) {
                 showExportToast('error', 'Failed to fetch API specification');

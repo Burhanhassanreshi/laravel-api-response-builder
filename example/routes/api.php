@@ -2,91 +2,50 @@
 
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\V1\UserController as UserControllerV1;
+use App\Http\Controllers\V2\UserController as UserControllerV2;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes for Demo
-|--------------------------------------------------------------------------
-|
-| These routes demonstrate the Laravel API Response Builder package.
-| Run: php artisan serve
-| Then test endpoints with Postman or browser
-|
-| ZERO-CONFIGURATION DOCUMENTATION:
-| All routes below are automatically documented in Swagger UI!
-| Visit /api-docs to see the generated documentation.
-| No PHP attributes required - it just works!
-|
-*/
+// Versioned API Routes
+Route::prefix('v1')->group(function () {
+    Route::get('/users', [UserControllerV1::class, 'index']);
+    Route::get('/users/{id}', [UserControllerV1::class, 'show']);
+    Route::post('/users', [UserControllerV1::class, 'store']);
+    Route::put('/users/{id}', [UserControllerV1::class, 'update']);
+    Route::delete('/users/{id}', [UserControllerV1::class, 'destroy']);
+});
 
-// ==========================================
-// USER RESOURCE (FormRequest Demo)
-// ==========================================
-// This demonstrates automatic schema extraction from FormRequest
+Route::prefix('v2')->group(function () {
+    Route::get('/users', [UserControllerV2::class, 'index']);
+    Route::get('/users/{id}', [UserControllerV2::class, 'show']);
+    Route::post('/users', [UserControllerV2::class, 'store']);
+    Route::put('/users/{id}', [UserControllerV2::class, 'update']);
+    Route::delete('/users/{id}', [UserControllerV2::class, 'destroy']);
+    Route::post('/users/bulk', [UserControllerV2::class, 'bulkStore']);
+    Route::delete('/users/bulk', [UserControllerV2::class, 'bulkDestroy']);
+});
 
-Route::get('/users', [UserController::class, 'index']);           // List users (paginated)
-Route::get('/users/{id}', [UserController::class, 'show']);       // Get single user
-Route::post('/users', [UserController::class, 'store']);          // Create user (uses CreateUserRequest!)
-Route::put('/users/{id}', [UserController::class, 'update']);     // Update user
-Route::delete('/users/{id}', [UserController::class, 'destroy']); // Delete user
+// User Resource
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{id}', [UserController::class, 'show']);
+Route::post('/users', [UserController::class, 'store']);
+Route::put('/users/{id}', [UserController::class, 'update']);
+Route::delete('/users/{id}', [UserController::class, 'destroy']);
 
-// ==========================================
-// SUCCESS RESPONSES
-// ==========================================
-
-// Basic success - GET /api/demo/success
+// Demo Endpoints
 Route::get('/demo/success', [DemoController::class, 'success']);
-
-// List all users - GET /api/demo/users
 Route::get('/demo/users', [DemoController::class, 'users']);
-
-// Paginated users - GET /api/demo/users-paginated
 Route::get('/demo/users-paginated', [DemoController::class, 'usersPaginated']);
-
-// Create user (201) - POST /api/demo/users
 Route::post('/demo/users', [DemoController::class, 'store']);
-
-// Delete user (204) - DELETE /api/demo/users/1
 Route::delete('/demo/users/{id}', [DemoController::class, 'destroy']);
-
-// ==========================================
-// ERROR RESPONSES
-// ==========================================
-
-// Bad request (400) - GET /api/demo/bad-request
 Route::get('/demo/bad-request', [DemoController::class, 'badRequest']);
-
-// Unauthorized (401) - GET /api/demo/unauthorized
 Route::get('/demo/unauthorized', [DemoController::class, 'unauthorized']);
-
-// Forbidden (403) - GET /api/demo/forbidden
 Route::get('/demo/forbidden', [DemoController::class, 'forbidden']);
-
-// Not found (404) - GET /api/demo/not-found
 Route::get('/demo/not-found', [DemoController::class, 'notFound']);
-
-// Validation error (422) - POST /api/demo/validate
 Route::post('/demo/validate', [DemoController::class, 'validationError']);
-
-// Rate limited (429) - GET /api/demo/rate-limited
 Route::get('/demo/rate-limited', [DemoController::class, 'rateLimited']);
-
-// Server error (500) - GET /api/demo/server-error
 Route::get('/demo/server-error', [DemoController::class, 'serverError']);
-
-// ==========================================
-// ADVANCED FEATURES
-// ==========================================
-
-// Custom data fields - GET /api/demo/custom-data
 Route::get('/demo/custom-data', [DemoController::class, 'customData']);
-
-// Custom headers - GET /api/demo/custom-headers
 Route::get('/demo/custom-headers', [DemoController::class, 'customHeaders']);
-
-// Async job (202) - POST /api/demo/async-job
 Route::post('/demo/async-job', [DemoController::class, 'asyncJob']);
-
-// Conflict (409) - POST /api/demo/conflict
 Route::post('/demo/conflict', [DemoController::class, 'conflict']);

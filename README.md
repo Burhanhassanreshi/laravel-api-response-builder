@@ -14,6 +14,7 @@ A clean and consistent API response builder for Laravel applications. This packa
 - Built-in methods for common HTTP status codes
 - Automatic pagination metadata (including cursor pagination)
 - **Auto-generated OpenAPI/Swagger documentation**
+- **API versioning support (v1, v2, etc.) with version switcher UI**
 - **Export to Postman, Insomnia, JSON & YAML**
 - Response macros for custom response types
 - Testing helpers for API assertions
@@ -574,6 +575,68 @@ Or in your config file:
 ```php
 'include_status_code' => false,
 ```
+
+### API Versioning
+
+The package supports versioned API documentation. When enabled, it auto-detects version prefixes from your routes (e.g., `api/v1/*`, `api/v2/*`) and generates separate OpenAPI specs for each version with a version switcher in the Swagger UI.
+
+#### Enable Versioning
+
+Add to your `.env` file:
+
+```env
+API_DOCS_VERSIONING=true
+```
+
+Or in your config file (`config/api-response.php`):
+
+```php
+'openapi' => [
+    // ... other options
+
+    'versioning' => [
+        'enabled' => true,
+        'auto_detect' => true,
+        'default_version' => 'v2', // Optional: set default version
+    ],
+],
+```
+
+#### Custom Version Definitions
+
+For more control, you can define custom version patterns:
+
+```php
+'versioning' => [
+    'enabled' => true,
+    'auto_detect' => false,
+    'default_version' => 'v2',
+    'versions' => [
+        'v1' => [
+            'title' => 'API v1 (Legacy)',
+            'description' => 'Legacy API version - deprecated',
+            'pattern' => 'api/v1/*',
+        ],
+        'v2' => [
+            'title' => 'API v2 (Current)',
+            'description' => 'Current stable API version',
+            'pattern' => 'api/v2/*',
+        ],
+    ],
+],
+```
+
+#### Versioned Endpoints
+
+When versioning is enabled, the following endpoints become available:
+
+| Endpoint | Description |
+|----------|-------------|
+| `/api-docs` | Swagger UI with version switcher |
+| `/api-docs/openapi.json` | Full OpenAPI spec (all versions) |
+| `/api-docs/versions` | List of available versions |
+| `/api-docs/v1/openapi.json` | OpenAPI spec for v1 only |
+| `/api-docs/v2/openapi.json` | OpenAPI spec for v2 only |
 
 ## Testing
 

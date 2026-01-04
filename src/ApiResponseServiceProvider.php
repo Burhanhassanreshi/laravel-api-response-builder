@@ -67,6 +67,14 @@ class ApiResponseServiceProvider extends ServiceProvider
 
         Route::get($docsRoute . '/openapi.json', [SwaggerController::class, 'spec'])
             ->name('api-docs.spec');
+
+        // Versioned spec endpoints
+        Route::get($docsRoute . '/versions', [SwaggerController::class, 'versions'])
+            ->name('api-docs.versions');
+
+        Route::get($docsRoute . '/{version}/openapi.json', [SwaggerController::class, 'versionedSpec'])
+            ->name('api-docs.spec.versioned')
+            ->where('version', 'v[0-9]+');
     }
 
     /**
