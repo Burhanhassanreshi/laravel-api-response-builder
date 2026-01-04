@@ -375,7 +375,12 @@ class SwaggerController extends Controller
         }
 
         .version-menu-item:hover {
-            background: rgba(16, 185, 129, 0.1);
+            background: var(--bg-elevated);
+        }
+
+        .version-menu-item:hover .version-title,
+        .version-menu-item:hover .version-desc {
+            color: var(--text-primary);
         }
 
         .version-menu-item.active {
@@ -427,8 +432,8 @@ class SwaggerController extends Controller
         }
 
         .ws-btn:hover {
-            border-color: var(--info);
-            background: rgba(6, 182, 212, 0.1);
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
         }
 
         .ws-btn svg {
