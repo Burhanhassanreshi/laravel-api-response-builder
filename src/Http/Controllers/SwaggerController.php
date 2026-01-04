@@ -381,20 +381,9 @@ class SwaggerController extends Controller
             background: var(--bg-elevated);
         }
 
-        .version-menu-item:hover .version-title {
-            color: var(--primary);
-        }
-
-        .version-menu-item:hover .version-desc {
-            color: var(--text-primary);
-        }
-
         .version-menu-item.active {
-            background: rgba(16, 185, 129, 0.15);
-        }
-
-        .version-menu-item.active .version-title {
-            color: var(--primary);
+            border: 1px solid var(--primary);
+            background: transparent;
         }
 
         .version-menu-item .version-name {
@@ -750,7 +739,7 @@ class SwaggerController extends Controller
         .ws-preset-btn:hover {
             border-color: var(--primary);
             color: var(--primary);
-            background: rgba(16, 185, 129, 0.1);
+            background: transparent;
         }
 
         /* Export Dropdown */
@@ -1134,9 +1123,9 @@ class SwaggerController extends Controller
         }
 
         .auth-type-btn.active {
-            background: rgba(16, 185, 129, 0.15);
+            background: transparent;
             border-color: var(--primary);
-            color: var(--primary-light);
+            color: white;
         }
 
         .auth-input-group {
@@ -1168,7 +1157,6 @@ class SwaggerController extends Controller
         .auth-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
         .auth-input::placeholder {
@@ -1203,7 +1191,6 @@ class SwaggerController extends Controller
             background: var(--primary);
             border: none;
             color: white;
-            box-shadow: 0 4px 14px var(--primary-glow);
         }
 
         .auth-modal-btn-primary:hover {

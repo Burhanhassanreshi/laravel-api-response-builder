@@ -360,6 +360,24 @@ The package automatically generates OpenAPI 3.0 documentation from your API rout
 
 ![Swagger UI Screenshot](docs/images/swagger-ui-screenshot.png)
 
+### Export to Multiple Formats
+
+Export your API documentation to Postman, Insomnia, JSON, or YAML with a single click.
+
+![Export Dropdown](docs/images/swagger-ui-screenshot-export.png)
+
+### Built-in Authorization
+
+Easily configure Bearer Token or API Key authentication directly from the UI.
+
+![Authorization Modal](docs/images/swagger-ui-screenshot-auth.png)
+
+### WebSocket Tester
+
+Test WebSocket connections directly from the documentation with real-time message sending and receiving.
+
+![WebSocket Tester](docs/images/swagger-ui-screenshot-websocket.png)
+
 ### Zero-Configuration Auto-Generation
 
 The package intelligently generates documentation by:
