@@ -60,6 +60,12 @@ return [
             'default_version' => env('API_DOCS_DEFAULT_VERSION', null),
             'versions' => [],
         ],
+
+        'websocket' => [
+            'enabled' => env('API_DOCS_WEBSOCKET', true),
+            'url' => env('WEBSOCKET_URL', env('APP_URL', 'http://localhost')),
+            'endpoints' => [],
+        ],
     ],
 
 ];

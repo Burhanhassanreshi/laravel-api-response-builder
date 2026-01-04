@@ -59,6 +59,27 @@ class SwaggerController extends Controller
     }
 
     /**
+     * Get WebSocket endpoints configuration.
+     */
+    public function websockets(): JsonResponse
+    {
+        $wsConfig = config('api-response.openapi.websocket', []);
+
+        if (! ($wsConfig['enabled'] ?? true)) {
+            return response()->json(['endpoints' => []]);
+        }
+
+        $baseUrl = $wsConfig['url'] ?? config('app.url', 'http://localhost');
+        $wsUrl = preg_replace('/^http/', 'ws', $baseUrl);
+
+        return response()->json([
+            'enabled' => true,
+            'url' => $wsUrl,
+            'endpoints' => $wsConfig['endpoints'] ?? [],
+        ]);
+    }
+
+    /**
      * Get the Swagger UI HTML.
      */
     protected function getSwaggerUIHtml(string $title, string $specUrl, string $appName, ?string $appLogo): string
@@ -386,6 +407,334 @@ class SwaggerController extends Controller
 
         .version-menu-item.active .version-check {
             opacity: 1;
+        }
+
+        /* WebSocket Tester */
+        .ws-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ws-btn:hover {
+            border-color: var(--info);
+            background: rgba(6, 182, 212, 0.1);
+        }
+
+        .ws-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .ws-btn.connected {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .ws-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .ws-modal.active {
+            display: flex;
+        }
+
+        .ws-modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ws-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ws-modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ws-modal-header h3 svg {
+            width: 24px;
+            height: 24px;
+            color: var(--info);
+        }
+
+        .ws-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .ws-close-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .ws-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .ws-connection-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .ws-url-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+        }
+
+        .ws-url-input:focus {
+            outline: none;
+            border-color: var(--info);
+        }
+
+        .ws-connect-btn {
+            padding: 12px 24px;
+            background: var(--info);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ws-connect-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .ws-connect-btn.disconnect {
+            background: var(--danger);
+        }
+
+        .ws-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .ws-status.disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .ws-status.connected {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .ws-status.connecting {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .ws-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .ws-panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .ws-panel {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .ws-panel-header {
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .ws-panel-body {
+            padding: 16px;
+        }
+
+        .ws-message-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        .ws-message-input:focus {
+            outline: none;
+            border-color: var(--info);
+        }
+
+        .ws-send-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 10px;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ws-send-btn:hover:not(:disabled) {
+            filter: brightness(1.1);
+        }
+
+        .ws-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ws-messages {
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        .ws-message {
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        .ws-message.sent {
+            background: rgba(6, 182, 212, 0.1);
+            border-left: 3px solid var(--info);
+        }
+
+        .ws-message.received {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--success);
+        }
+
+        .ws-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--danger);
+        }
+
+        .ws-message.system {
+            background: rgba(113, 113, 122, 0.1);
+            border-left: 3px solid var(--text-secondary);
+            font-style: italic;
+        }
+
+        .ws-message-time {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .ws-message-content {
+            color: var(--text-primary);
+        }
+
+        .ws-presets {
+            margin-bottom: 12px;
+        }
+
+        .ws-presets-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ws-preset-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .ws-preset-btn {
+            padding: 6px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .ws-preset-btn:hover {
+            border-color: var(--info);
+            color: var(--text-primary);
         }
 
         /* Export Dropdown */
@@ -1596,6 +1945,12 @@ class SwaggerController extends Controller
                         </div>
                     </div>
                 </div>
+                <button class="ws-btn" id="ws-btn" onclick="openWsModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span>WebSocket</span>
+                </button>
                 <button class="auth-btn" id="auth-btn" onclick="openAuthModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -1603,6 +1958,59 @@ class SwaggerController extends Controller
                     <span id="auth-btn-text">Authorize</span>
                 </button>
                 <span class="badge badge-primary">OpenAPI 3.0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebSocket Modal -->
+    <div class="ws-modal" id="ws-modal">
+        <div class="ws-modal-content">
+            <div class="ws-modal-header">
+                <h3>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    WebSocket Tester
+                </h3>
+                <button class="ws-close-btn" onclick="closeWsModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="ws-modal-body">
+                <div class="ws-connection-bar">
+                    <input type="text" class="ws-url-input" id="ws-url" placeholder="ws://localhost:6001/app/your-key">
+                    <button class="ws-connect-btn" id="ws-connect-btn" onclick="toggleWsConnection()">Connect</button>
+                </div>
+                <div class="ws-status disconnected" id="ws-status">
+                    <span class="ws-status-dot"></span>
+                    <span id="ws-status-text">Disconnected</span>
+                </div>
+                <div class="ws-panels">
+                    <div class="ws-panel">
+                        <div class="ws-panel-header">Send Message</div>
+                        <div class="ws-panel-body">
+                            <div class="ws-presets">
+                                <div class="ws-presets-label">Quick Templates</div>
+                                <div class="ws-preset-btns">
+                                    <button class="ws-preset-btn" onclick="setWsPreset('subscribe')">Subscribe</button>
+                                    <button class="ws-preset-btn" onclick="setWsPreset('unsubscribe')">Unsubscribe</button>
+                                    <button class="ws-preset-btn" onclick="setWsPreset('ping')">Ping</button>
+                                    <button class="ws-preset-btn" onclick="setWsPreset('event')">Client Event</button>
+                                </div>
+                            </div>
+                            <textarea class="ws-message-input" id="ws-message" placeholder='{"event": "subscribe", "channel": "my-channel"}'></textarea>
+                            <button class="ws-send-btn" id="ws-send-btn" onclick="sendWsMessage()" disabled>Send Message</button>
+                        </div>
+                    </div>
+                    <div class="ws-panel">
+                        <div class="ws-panel-header">Messages</div>
+                        <div class="ws-panel-body">
+                            <div class="ws-messages" id="ws-messages"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2521,6 +2929,210 @@ class SwaggerController extends Controller
         function generateId() {
             return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         }
+
+        // ============================================
+        // WebSocket Tester
+        // ============================================
+
+        let wsConnection = null;
+        let wsConnected = false;
+        const wsEndpointsUrl = baseSpecUrl.replace('/openapi.json', '/websockets');
+
+        const wsPresets = {
+            subscribe: {
+                event: 'pusher:subscribe',
+                data: {
+                    channel: 'my-channel'
+                }
+            },
+            unsubscribe: {
+                event: 'pusher:unsubscribe',
+                data: {
+                    channel: 'my-channel'
+                }
+            },
+            ping: {
+                event: 'pusher:ping',
+                data: {}
+            },
+            event: {
+                event: 'client-message',
+                data: {
+                    message: 'Hello from client!'
+                }
+            }
+        };
+
+        function openWsModal() {
+            document.getElementById('ws-modal').classList.add('active');
+            loadWsConfig();
+        }
+
+        function closeWsModal() {
+            document.getElementById('ws-modal').classList.remove('active');
+        }
+
+        async function loadWsConfig() {
+            try {
+                const response = await fetch(wsEndpointsUrl);
+                const data = await response.json();
+
+                if (data.url) {
+                    const savedUrl = localStorage.getItem('ws_url');
+                    document.getElementById('ws-url').value = savedUrl || data.url;
+                }
+            } catch (error) {
+                console.log('WebSocket config not available');
+            }
+        }
+
+        function toggleWsConnection() {
+            if (wsConnected) {
+                disconnectWs();
+            } else {
+                connectWs();
+            }
+        }
+
+        function connectWs() {
+            const url = document.getElementById('ws-url').value.trim();
+
+            if (!url) {
+                addWsMessage('error', 'Please enter a WebSocket URL');
+                return;
+            }
+
+            localStorage.setItem('ws_url', url);
+            updateWsStatus('connecting');
+
+            try {
+                wsConnection = new WebSocket(url);
+
+                wsConnection.onopen = function() {
+                    wsConnected = true;
+                    updateWsStatus('connected');
+                    addWsMessage('system', 'Connected to ' + url);
+                    document.getElementById('ws-send-btn').disabled = false;
+                    document.getElementById('ws-btn').classList.add('connected');
+                };
+
+                wsConnection.onmessage = function(event) {
+                    let data = event.data;
+                    try {
+                        data = JSON.stringify(JSON.parse(event.data), null, 2);
+                    } catch (e) {}
+                    addWsMessage('received', data);
+                };
+
+                wsConnection.onerror = function(error) {
+                    addWsMessage('error', 'Connection error');
+                };
+
+                wsConnection.onclose = function(event) {
+                    wsConnected = false;
+                    updateWsStatus('disconnected');
+                    addWsMessage('system', 'Disconnected (code: ' + event.code + ')');
+                    document.getElementById('ws-send-btn').disabled = true;
+                    document.getElementById('ws-btn').classList.remove('connected');
+                };
+            } catch (error) {
+                addWsMessage('error', 'Failed to connect: ' + error.message);
+                updateWsStatus('disconnected');
+            }
+        }
+
+        function disconnectWs() {
+            if (wsConnection) {
+                wsConnection.close();
+                wsConnection = null;
+            }
+        }
+
+        function updateWsStatus(status) {
+            const statusEl = document.getElementById('ws-status');
+            const statusText = document.getElementById('ws-status-text');
+            const connectBtn = document.getElementById('ws-connect-btn');
+
+            statusEl.className = 'ws-status ' + status;
+
+            switch (status) {
+                case 'connected':
+                    statusText.textContent = 'Connected';
+                    connectBtn.textContent = 'Disconnect';
+                    connectBtn.classList.add('disconnect');
+                    break;
+                case 'connecting':
+                    statusText.textContent = 'Connecting...';
+                    connectBtn.textContent = 'Connecting...';
+                    break;
+                default:
+                    statusText.textContent = 'Disconnected';
+                    connectBtn.textContent = 'Connect';
+                    connectBtn.classList.remove('disconnect');
+            }
+        }
+
+        function sendWsMessage() {
+            if (!wsConnected || !wsConnection) {
+                addWsMessage('error', 'Not connected');
+                return;
+            }
+
+            const message = document.getElementById('ws-message').value.trim();
+
+            if (!message) {
+                addWsMessage('error', 'Please enter a message');
+                return;
+            }
+
+            try {
+                wsConnection.send(message);
+                addWsMessage('sent', message);
+            } catch (error) {
+                addWsMessage('error', 'Failed to send: ' + error.message);
+            }
+        }
+
+        function addWsMessage(type, content) {
+            const messagesEl = document.getElementById('ws-messages');
+            const time = new Date().toLocaleTimeString();
+
+            const messageEl = document.createElement('div');
+            messageEl.className = 'ws-message ' + type;
+            messageEl.innerHTML = \`
+                <div class="ws-message-time">\${time} - \${type.toUpperCase()}</div>
+                <div class="ws-message-content">\${escapeHtml(content)}</div>
+            \`;
+
+            messagesEl.appendChild(messageEl);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function setWsPreset(preset) {
+            if (wsPresets[preset]) {
+                document.getElementById('ws-message').value = JSON.stringify(wsPresets[preset], null, 2);
+            }
+        }
+
+        // Close WS modal on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeWsModal();
+            }
+        });
+
+        // Close WS modal on overlay click
+        document.getElementById('ws-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWsModal();
+            }
+        });
     </script>
 </body>
 </html>

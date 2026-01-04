@@ -15,6 +15,7 @@ A clean and consistent API response builder for Laravel applications. This packa
 - Automatic pagination metadata (including cursor pagination)
 - **Auto-generated OpenAPI/Swagger documentation**
 - **API versioning support (v1, v2, etc.) with version switcher UI**
+- **Built-in WebSocket tester in Swagger UI**
 - **Export to Postman, Insomnia, JSON & YAML**
 - Response macros for custom response types
 - Testing helpers for API assertions
@@ -637,6 +638,32 @@ When versioning is enabled, the following endpoints become available:
 | `/api-docs/versions` | List of available versions |
 | `/api-docs/v1/openapi.json` | OpenAPI spec for v1 only |
 | `/api-docs/v2/openapi.json` | OpenAPI spec for v2 only |
+
+### WebSocket Testing
+
+The Swagger UI includes a built-in WebSocket tester for testing real-time connections directly from the documentation.
+
+#### Features
+
+- Connect to any WebSocket endpoint
+- Send and receive messages in real-time
+- Pre-built message templates (Subscribe, Unsubscribe, Ping, Client Event)
+- Message history with timestamps
+- Connection state persistence
+
+#### Configuration
+
+```php
+'openapi' => [
+    'websocket' => [
+        'enabled' => true,
+        'url' => env('WEBSOCKET_URL', 'ws://localhost:6001'),
+        'endpoints' => [],
+    ],
+],
+```
+
+Click the **WebSocket** button in the Swagger UI header to open the tester.
 
 ## Testing
 
