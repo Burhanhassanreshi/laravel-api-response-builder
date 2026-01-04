@@ -2149,31 +2149,27 @@ class SwaggerController extends Controller
             let html = '';
 
             // Add "All Versions" option
-            html += \`
-                <button class="version-menu-item \${!currentVersion ? 'active' : ''}" onclick="switchVersion(null)">
-                    <div class="version-name">
-                        <span class="version-title">All Versions</span>
-                        <span class="version-desc">Show all API endpoints</span>
-                    </div>
-                    <svg class="version-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                </button>
-            \`;
+            html += '<button class="version-menu-item ' + (!currentVersion ? 'active' : '') + '" onclick="switchVersion(null)">' +
+                '<div class="version-name">' +
+                    '<span class="version-title">All Versions</span>' +
+                    '<span class="version-desc">Show all API endpoints</span>' +
+                '</div>' +
+                '<svg class="version-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' +
+                '</svg>' +
+            '</button>';
 
             // Add each version
             for (const version of availableVersions) {
-                html += \`
-                    <button class="version-menu-item \${currentVersion === version.name ? 'active' : ''}" onclick="switchVersion('\${version.name}')">
-                        <div class="version-name">
-                            <span class="version-title">\${version.title || version.name.toUpperCase()}</span>
-                            <span class="version-desc">\${version.description || ''}</span>
-                        </div>
-                        <svg class="version-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </button>
-                \`;
+                html += '<button class="version-menu-item ' + (currentVersion === version.name ? 'active' : '') + '" onclick="switchVersion(\'' + version.name + '\')">' +
+                    '<div class="version-name">' +
+                        '<span class="version-title">' + (version.title || version.name.toUpperCase()) + '</span>' +
+                        '<span class="version-desc">' + (version.description || '') + '</span>' +
+                    '</div>' +
+                    '<svg class="version-check" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+                        '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' +
+                    '</svg>' +
+                '</button>';
             }
 
             versionList.innerHTML = html;
@@ -3099,10 +3095,8 @@ class SwaggerController extends Controller
 
             const messageEl = document.createElement('div');
             messageEl.className = 'ws-message ' + type;
-            messageEl.innerHTML = \`
-                <div class="ws-message-time">\${time} - \${type.toUpperCase()}</div>
-                <div class="ws-message-content">\${escapeHtml(content)}</div>
-            \`;
+            messageEl.innerHTML = '<div class="ws-message-time">' + time + ' - ' + type.toUpperCase() + '</div>' +
+                '<div class="ws-message-content">' + escapeHtml(content) + '</div>';
 
             messagesEl.appendChild(messageEl);
             messagesEl.scrollTop = messagesEl.scrollHeight;
