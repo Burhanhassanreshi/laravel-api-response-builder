@@ -375,16 +375,23 @@ class SwaggerController extends Controller
         }
 
         .version-menu-item:hover {
-            background: var(--bg-elevated);
+            background: rgba(16, 185, 129, 0.1);
         }
 
-        .version-menu-item:hover .version-title,
+        .version-menu-item:hover .version-title {
+            color: var(--primary);
+        }
+
         .version-menu-item:hover .version-desc {
             color: var(--text-primary);
         }
 
         .version-menu-item.active {
-            background: rgba(16, 185, 129, 0.15);
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 3px solid var(--primary);
+        }
+
+        .version-menu-item.active .version-title {
             color: var(--primary);
         }
 
@@ -396,6 +403,7 @@ class SwaggerController extends Controller
 
         .version-menu-item .version-title {
             font-weight: 600;
+            color: var(--text-primary);
         }
 
         .version-menu-item .version-desc {
@@ -540,12 +548,12 @@ class SwaggerController extends Controller
 
         .ws-url-input:focus {
             outline: none;
-            border-color: var(--info);
+            border-color: var(--primary);
         }
 
         .ws-connect-btn {
             padding: 12px 24px;
-            background: var(--info);
+            background: var(--primary);
             border: none;
             border-radius: 8px;
             color: white;
@@ -638,7 +646,7 @@ class SwaggerController extends Controller
 
         .ws-message-input:focus {
             outline: none;
-            border-color: var(--info);
+            border-color: var(--primary);
         }
 
         .ws-send-btn {
@@ -738,8 +746,9 @@ class SwaggerController extends Controller
         }
 
         .ws-preset-btn:hover {
-            border-color: var(--info);
-            color: var(--text-primary);
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
         }
 
         /* Export Dropdown */
