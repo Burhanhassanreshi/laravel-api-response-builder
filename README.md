@@ -1,3 +1,15 @@
+<p align="center">
+  <img src="docs/images/logo-banner.svg" alt="Laravel API Toolkit" width="600">
+</p>
+
+<p align="center">
+  <a href="https://packagist.org/packages/stackmasteraliza/laravel-api-response"><img src="https://img.shields.io/packagist/v/stackmasteraliza/laravel-api-response.svg" alt="Latest Version on Packagist"></a>
+  <a href="https://packagist.org/packages/stackmasteraliza/laravel-api-response"><img src="https://img.shields.io/packagist/dt/stackmasteraliza/laravel-api-response.svg" alt="Total Downloads"></a>
+  <a href="https://doi.org/10.5281/zenodo.18204415"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18204415.svg" alt="DOI"></a>
+  <a href="https://packagist.org/packages/stackmasteraliza/laravel-api-response"><img src="https://img.shields.io/packagist/l/stackmasteraliza/laravel-api-response.svg" alt="License"></a>
+  <a href="https://laravel-news.com"><img src="https://img.shields.io/badge/Laravel%20News-Featured-orange" alt="Laravel News"></a>
+</p>
+
 # Laravel API Toolkit
 
 ### `stackmasteraliza/laravel-api-response`

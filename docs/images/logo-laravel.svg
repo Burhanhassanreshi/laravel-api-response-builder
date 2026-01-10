@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background circle - Laravel red -->
+  <circle cx="100" cy="100" r="95" fill="#FF2D20"/>
+
+  <!-- Left curly brace -->
+  <path d="M55 60 Q45 60 45 75 L45 90 Q45 100 35 100 Q45 100 45 110 L45 125 Q45 140 55 140"
+        fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Right curly brace -->
+  <path d="M145 60 Q155 60 155 75 L155 90 Q155 100 165 100 Q155 100 155 110 L155 125 Q155 140 145 140"
+        fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Checkmark in center -->
+  <path d="M80 100 L95 115 L125 80"
+        fill="none" stroke="white" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

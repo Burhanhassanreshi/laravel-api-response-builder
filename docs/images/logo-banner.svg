@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" width="600" height="150">
+  <!-- Background -->
+  <rect width="600" height="150" fill="#0f172a" rx="10"/>
+
+  <!-- Logo circle -->
+  <circle cx="75" cy="75" r="50" fill="#10b981"/>
+
+  <!-- Left curly brace -->
+  <path d="M52 45 Q45 45 45 55 L45 65 Q45 75 38 75 Q45 75 45 85 L45 95 Q45 105 52 105"
+        fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Right curly brace -->
+  <path d="M98 45 Q105 45 105 55 L105 65 Q105 75 112 75 Q105 75 105 85 L105 95 Q105 105 98 105"
+        fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Checkmark -->
+  <path d="M60 75 L70 85 L92 60"
+        fill="none" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Text: Laravel API Toolkit -->
+  <text x="145" y="65" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="bold" fill="white">Laravel API Toolkit</text>
+
+  <!-- Subtitle -->
+  <text x="145" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#94a3b8">Standardized Responses + Auto-generated Swagger Docs</text>
+</svg>
